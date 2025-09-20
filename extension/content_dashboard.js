@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 //MAIN
 //Global vars
 var settings, airline, server, todayDate;
@@ -6,19 +6,19 @@ $(function () {
     todayDate = AES.getServerDate();
     airline = AES.getAirline();
     server = AES.getServerName();
-    chrome.storage.local.get(["settings"], function (result) {
+    chrome.storage.local.get(['settings'], function (result) {
         settings = result.settings;
 
         displayDashboard();
         dashboardHandle();
-        $("#aes-select-dashboard-main").change(function () {
+        $('#aes-select-dashboard-main').change(function () {
             dashboardHandle();
         });
     });
 });
 
 function displayDashboard() {
-    let mainDiv = $("#enterprise-dashboard");
+    let mainDiv = $('#enterprise-dashboard');
     mainDiv.before(
         `
     <h3>AirlineSim Enhancement Suite Dashboard</h3>
@@ -40,27 +40,27 @@ function displayDashboard() {
     </div>
     `
     );
-    $("#aes-select-dashboard-main").val(settings.general.defaultDashboard);
+    $('#aes-select-dashboard-main').val(settings.general.defaultDashboard);
 }
 
 function dashboardHandle() {
-    let value = $("#aes-select-dashboard-main").val();
+    let value = $('#aes-select-dashboard-main').val();
     settings.general.defaultDashboard = value;
     chrome.storage.local.set({ settings: settings }, function () {});
     switch (value) {
-        case "general":
+        case 'general':
             displayGeneral();
             break;
-        case "routeManagement":
+        case 'routeManagement':
             displayRouteManagement();
             break;
-        case "competitorMonitoring":
+        case 'competitorMonitoring':
             displayCompetitorMonitoring();
             break;
-        case "hr":
+        case 'hr':
             displayHr();
             break;
-        case "aircraftProfitability":
+        case 'aircraftProfitability':
             displayAircraftProfitability();
             break;
         default:
@@ -74,16 +74,16 @@ function displayRouteManagement() {
         setDefaultRouteManagementSettings();
     }
 
-    let mainDiv = $("#aes-div-dashboard");
+    let mainDiv = $('#aes-div-dashboard');
     //Build layout
     mainDiv.empty();
-    let title = $("<h3></h3>").text("Route Management");
+    let title = $('<h3></h3>').text('Route Management');
     let div = $(
         '<div id="aes-div-dashboard-routeManagement" class="as-panel"></div>'
     );
     mainDiv.append(title, div);
     //Get schedule
-    let scheduleKey = server + airline.id + "schedule";
+    let scheduleKey = server + airline.id + 'schedule';
     chrome.storage.local.get([scheduleKey], function (result) {
         let scheduleData = result[scheduleKey];
         if (scheduleData) {
@@ -91,40 +91,40 @@ function displayRouteManagement() {
             generateRouteManagementTable(scheduleData);
 
             // Option buttons
-            let fieldsetEl = document.createElement("fieldset");
-            let legendEl = document.createElement("legend");
-            let buttonGroupEl = document.createElement("div");
+            let fieldsetEl = document.createElement('fieldset');
+            let legendEl = document.createElement('legend');
+            let buttonGroupEl = document.createElement('div');
 
             let buttonElements = {
                 selectFirstSix: {
-                    label: "Select first 6",
+                    label: 'Select first 6',
                 },
                 hideChecked: {
-                    label: "Hide checked",
+                    label: 'Hide checked',
                 },
                 openInventory: {
-                    label: "Open next 6 inventory",
+                    label: 'Open next 6 inventory',
                 },
                 exportCSV: {
-                    label: "Export to CSV",
+                    label: 'Export to CSV',
                 },
                 reloadTable: {
-                    label: "Reload table",
+                    label: 'Reload table',
                 },
             };
 
             for (let key in buttonElements) {
                 let buttonObj = buttonElements[key];
-                let buttonEl = document.createElement("button");
+                let buttonEl = document.createElement('button');
                 let buttonClassNames = buttonObj?.classNames;
                 let buttonType = buttonObj?.type;
-                let buttonDefaultClassNames = "btn btn-default";
+                let buttonDefaultClassNames = 'btn btn-default';
                 buttonEl.innerText = buttonObj.label;
 
                 if (buttonType) {
-                    buttonEl.setAttribute("type", buttonType);
+                    buttonEl.setAttribute('type', buttonType);
                 } else {
-                    buttonEl.setAttribute("type", "button");
+                    buttonEl.setAttribute('type', 'button');
                 }
 
                 if (buttonClassNames) {
@@ -137,8 +137,8 @@ function displayRouteManagement() {
                 buttonGroupEl.append(buttonEl);
             }
 
-            legendEl.innerText = "Options";
-            buttonGroupEl.classList.add("btn-group");
+            legendEl.innerText = 'Options';
+            buttonGroupEl.classList.add('btn-group');
 
             fieldsetEl.append(legendEl, buttonGroupEl);
 
@@ -149,12 +149,12 @@ function displayRouteManagement() {
             // Button actions
 
             // Select first six
-            buttonElements["selectFirstSix"].element.addEventListener(
-                "click",
+            buttonElements['selectFirstSix'].element.addEventListener(
+                'click',
                 function () {
                     let count = 0;
-                    $("#aes-table-routeManagement tbody tr").each(function () {
-                        $(this).find("input").prop("checked", true);
+                    $('#aes-table-routeManagement tbody tr').each(function () {
+                        $(this).find('input').prop('checked', true);
                         count++;
                         if (count > 5) {
                             return false;
@@ -164,39 +164,39 @@ function displayRouteManagement() {
             );
 
             // Remove checked
-            buttonElements["hideChecked"].element.addEventListener(
-                "click",
+            buttonElements['hideChecked'].element.addEventListener(
+                'click',
                 function () {
-                    $("#aes-table-routeManagement tbody tr")
-                        .has("input:checked")
+                    $('#aes-table-routeManagement tbody tr')
+                        .has('input:checked')
                         .remove();
                 }
             );
 
             // Open Next 6 Inventory
-            buttonElements["openInventory"].element.addEventListener(
-                "click",
+            buttonElements['openInventory'].element.addEventListener(
+                'click',
                 function () {
                     // Find the next 6 unchecked routes and collect their URLs
                     let pages = [];
                     let count = 0;
 
-                    $("#aes-table-routeManagement tbody tr").each(function () {
+                    $('#aes-table-routeManagement tbody tr').each(function () {
                         if (count >= 6) return false; // Stop after 6
 
                         let checkbox = $(this).find("input[type='checkbox']");
-                        if (!checkbox.is(":checked")) {
+                        if (!checkbox.is(':checked')) {
                             // Check this route
-                            checkbox.prop("checked", true);
+                            checkbox.prop('checked', true);
 
                             // Get the URL for this route
-                            let orgdest = $(this).attr("id");
-                            orgdest = orgdest.split("-");
+                            let orgdest = $(this).attr('id');
+                            orgdest = orgdest.split('-');
                             orgdest = orgdest[2];
                             let url =
-                                "https://" +
+                                'https://' +
                                 server +
-                                ".airlinesim.aero/app/com/inventory/" +
+                                '.airlinesim.aero/app/com/inventory/' +
                                 orgdest;
                             pages.push(url);
                             count++;
@@ -205,7 +205,7 @@ function displayRouteManagement() {
 
                     // Open only the newly selected 6 tabs
                     for (let i = 0; i < pages.length; i++) {
-                        if (typeof chrome !== "undefined" && chrome.tabs) {
+                        if (typeof chrome !== 'undefined' && chrome.tabs) {
                             chrome.tabs.create({
                                 url: pages[i],
                                 active: false,
@@ -213,7 +213,7 @@ function displayRouteManagement() {
                         } else {
                             // Fallback: open with window.open and immediately refocus current window
                             const currentWindow = window;
-                            window.open(pages[i], "_blank");
+                            window.open(pages[i], '_blank');
                             setTimeout(() => currentWindow.focus(), 10);
                         }
                     }
@@ -221,18 +221,18 @@ function displayRouteManagement() {
             );
 
             // Export to CSV
-            buttonElements["exportCSV"].element.addEventListener(
-                "click",
+            buttonElements['exportCSV'].element.addEventListener(
+                'click',
                 function () {
                     // Get table headers (only visible columns)
                     let headers = [];
-                    $("#aes-table-routeManagement thead tr:last th").each(
+                    $('#aes-table-routeManagement thead tr:last th').each(
                         function (index) {
                             if (index === 0) {
-                                headers.push("Selected");
+                                headers.push('Selected');
                             } else {
                                 let headerText = $(this).text().trim();
-                                if (headerText && headerText !== "Action") {
+                                if (headerText && headerText !== 'Action') {
                                     headers.push(headerText);
                                 }
                             }
@@ -243,28 +243,28 @@ function displayRouteManagement() {
                     let csvData = [];
                     csvData.push(headers);
 
-                    $("#aes-table-routeManagement tbody tr").each(function () {
+                    $('#aes-table-routeManagement tbody tr').each(function () {
                         let row = [];
                         $(this)
-                            .find("td")
+                            .find('td')
                             .each(function (index) {
                                 if (index === 0) {
                                     let isChecked = $(this)
                                         .find("input[type='checkbox']")
-                                        .is(":checked");
-                                    row.push(isChecked ? "Yes" : "No");
+                                        .is(':checked');
+                                    row.push(isChecked ? 'Yes' : 'No');
                                 } else if (
                                     index ===
-                                    $(this).parent().find("td").length - 1
+                                    $(this).parent().find('td').length - 1
                                 ) {
                                     return;
                                 } else {
                                     let cellText = $(this).text().trim();
                                     // Handle cells that might contain commas or quotes
                                     if (
-                                        cellText.includes(",") ||
+                                        cellText.includes(',') ||
                                         cellText.includes('"') ||
-                                        cellText.includes("\n")
+                                        cellText.includes('\n')
                                     ) {
                                         cellText =
                                             '"' +
@@ -281,31 +281,31 @@ function displayRouteManagement() {
 
                     // Convert to CSV string
                     let csvString = csvData
-                        .map((row) => row.join(","))
-                        .join("\n");
+                        .map((row) => row.join(','))
+                        .join('\n');
 
                     // Create and download the file
                     let blob = new Blob([csvString], {
-                        type: "text/csv;charset=utf-8;",
+                        type: 'text/csv;charset=utf-8;',
                     });
-                    let link = document.createElement("a");
+                    let link = document.createElement('a');
 
                     if (link.download !== undefined) {
                         let url = URL.createObjectURL(blob);
-                        link.setAttribute("href", url);
+                        link.setAttribute('href', url);
 
                         // Generate filename with current date and server/airline info
                         let today = new Date();
                         let dateStr =
                             today.getFullYear() +
-                            "-" +
-                            String(today.getMonth() + 1).padStart(2, "0") +
-                            "-" +
-                            String(today.getDate()).padStart(2, "0");
+                            '-' +
+                            String(today.getMonth() + 1).padStart(2, '0') +
+                            '-' +
+                            String(today.getDate()).padStart(2, '0');
                         let filename = `route_management_${server}_${airline.code}_${dateStr}.csv`;
 
-                        link.setAttribute("download", filename);
-                        link.style.visibility = "hidden";
+                        link.setAttribute('download', filename);
+                        link.style.visibility = 'hidden';
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -315,8 +315,8 @@ function displayRouteManagement() {
             );
 
             // Reload table reloadTable
-            buttonElements["reloadTable"].element.addEventListener(
-                "click",
+            buttonElements['reloadTable'].element.addEventListener(
+                'click',
                 function () {
                     generateRouteManagementTable(scheduleData);
                 }
@@ -328,7 +328,7 @@ function displayRouteManagement() {
             );
             div.prepend(divRow);
             // Columns selector Checkbox listener
-            $("#aes-table-routeManagement-columns input").change(function () {
+            $('#aes-table-routeManagement-columns input').change(function () {
                 let show;
                 if (this.checked) {
                     show = 1;
@@ -349,7 +349,7 @@ function displayRouteManagement() {
         } else {
             //no schedule
             div.append(
-                "Need schedule info to show this section. Change Dashboard to General -> Schedule -> Extract Schedule."
+                'Need schedule info to show this section. Change Dashboard to General -> Schedule -> Extract Schedule.'
             );
         }
     });
@@ -358,173 +358,173 @@ function displayRouteManagement() {
 function setDefaultRouteManagementSettings() {
     let columns = [
         {
-            name: "Origin",
-            class: "aes-origin",
+            name: 'Origin',
+            class: 'aes-origin',
             number: 0,
             show: 1,
-            value: "origin",
+            value: 'origin',
         },
         {
-            name: "Destination",
-            class: "aes-destination",
+            name: 'Destination',
+            class: 'aes-destination',
             number: 0,
             show: 1,
-            value: "destination",
+            value: 'destination',
         },
         {
-            name: "Hub",
-            class: "aes-hub",
+            name: 'Hub',
+            class: 'aes-hub',
             number: 0,
             show: 1,
-            value: "hub",
+            value: 'hub',
         },
         {
-            name: "OD",
-            class: "aes-od",
+            name: 'OD',
+            class: 'aes-od',
             number: 0,
             show: 1,
-            value: "odName",
+            value: 'odName',
         },
         {
-            name: "Direction",
-            class: "aes-direction",
+            name: 'Direction',
+            class: 'aes-direction',
             number: 0,
             show: 1,
-            value: "direction",
+            value: 'direction',
         },
         {
-            name: "# of flight numbers",
-            class: "aes-fltNr",
+            name: '# of flight numbers',
+            class: 'aes-fltNr',
             number: 1,
             show: 1,
-            value: "fltNr",
+            value: 'fltNr',
         },
         {
-            name: "PAX frequency",
-            class: "aes-paxFreq",
+            name: 'PAX frequency',
+            class: 'aes-paxFreq',
             number: 1,
             show: 1,
-            value: "paxFreq",
+            value: 'paxFreq',
         },
         {
-            name: "Cargo frequency",
-            class: "aes-cargoFreq",
+            name: 'Cargo frequency',
+            class: 'aes-cargoFreq',
             number: 1,
             show: 1,
-            value: "cargoFreq",
+            value: 'cargoFreq',
         },
         {
-            name: "Total Frequency",
-            class: "aes-totalFreq",
+            name: 'Total Frequency',
+            class: 'aes-totalFreq',
             number: 1,
             show: 1,
-            value: "totalFreq",
+            value: 'totalFreq',
         },
         {
-            name: "Analysis date",
-            class: "aes-analysisDate",
-            number: 0,
-            show: 1,
-        },
-        {
-            name: "Previous Analysis date",
-            class: "aes-analysisPreDate",
+            name: 'Analysis date',
+            class: 'aes-analysisDate',
             number: 0,
             show: 1,
         },
         {
-            name: "Pricing date",
-            class: "aes-pricingDate",
+            name: 'Previous Analysis date',
+            class: 'aes-analysisPreDate',
             number: 0,
             show: 1,
         },
         {
-            name: "PAX load",
-            class: "aes-paxLoad",
+            name: 'Pricing date',
+            class: 'aes-pricingDate',
+            number: 0,
+            show: 1,
+        },
+        {
+            name: 'PAX load',
+            class: 'aes-paxLoad',
             number: 1,
             show: 1,
         },
         {
-            name: "PAX load &Delta;",
-            class: "aes-paxLoadDelta",
+            name: 'PAX load &Delta;',
+            class: 'aes-paxLoadDelta',
             number: 1,
             show: 1,
         },
         {
-            name: "Cargo load",
-            class: "aes-cargoLoad",
+            name: 'Cargo load',
+            class: 'aes-cargoLoad',
             number: 1,
             show: 1,
         },
         {
-            name: "Cargo load &Delta;",
-            class: "aes-cargoLoadDelta",
+            name: 'Cargo load &Delta;',
+            class: 'aes-cargoLoadDelta',
             number: 1,
             show: 1,
         },
         {
-            name: "Total load",
-            class: "aes-load",
+            name: 'Total load',
+            class: 'aes-load',
             number: 1,
             show: 1,
         },
         {
-            name: "Total load &Delta;",
-            class: "aes-loadDelta",
+            name: 'Total load &Delta;',
+            class: 'aes-loadDelta',
             number: 1,
             show: 1,
         },
         {
-            name: "PAX index",
-            class: "aes-paxIndex",
+            name: 'PAX index',
+            class: 'aes-paxIndex',
             number: 1,
             show: 1,
         },
         {
-            name: "PAX index &Delta;",
-            class: "aes-paxIndexDelta",
+            name: 'PAX index &Delta;',
+            class: 'aes-paxIndexDelta',
             number: 1,
             show: 1,
         },
         {
-            name: "Cargo index",
-            class: "aes-cargoIndex",
+            name: 'Cargo index',
+            class: 'aes-cargoIndex',
             number: 1,
             show: 1,
         },
         {
-            name: "Cargo index &Delta;",
-            class: "aes-cargoIndexDelta",
+            name: 'Cargo index &Delta;',
+            class: 'aes-cargoIndexDelta',
             number: 1,
             show: 1,
         },
         {
-            name: "Index",
-            class: "aes-index",
+            name: 'Index',
+            class: 'aes-index',
             number: 1,
             show: 1,
         },
         {
-            name: "Index &Delta;",
-            class: "aes-indexDelta",
+            name: 'Index &Delta;',
+            class: 'aes-indexDelta',
             number: 1,
             show: 1,
         },
         {
-            name: "Route PAX index",
-            class: "aes-routeIndexPax",
+            name: 'Route PAX index',
+            class: 'aes-routeIndexPax',
             number: 1,
             show: 1,
         },
         {
-            name: "Route Cargo index",
-            class: "aes-routeIndexCargo",
+            name: 'Route Cargo index',
+            class: 'aes-routeIndexCargo',
             number: 1,
             show: 1,
         },
         {
-            name: "Route index",
-            class: "aes-routeIndex",
+            name: 'Route index',
+            class: 'aes-routeIndex',
             number: 1,
             show: 1,
         },
@@ -536,11 +536,11 @@ function setDefaultRouteManagementSettings() {
 }
 
 function routeManagementApplyFilter() {
-    $("#aes-table-routeManagement tbody tr").each(function () {
+    $('#aes-table-routeManagement tbody tr').each(function () {
         let row = this;
         settings.routeManagement.filter.forEach(function (filter) {
             let cell = $(row)
-                .find("." + filter.columnCode)
+                .find('.' + filter.columnCode)
                 .text();
             //if(cell){
             //Get column info if number or not
@@ -566,22 +566,22 @@ function routeManagementApplyFilter() {
                 }
             }
             switch (filter.operation) {
-                case "=":
+                case '=':
                     if (cell != value) {
                         $(row).remove();
                     }
                     break;
-                case "!=":
+                case '!=':
                     if (cell == value) {
                         $(row).remove();
                     }
                     break;
-                case ">":
+                case '>':
                     if (cell < value) {
                         $(row).remove();
                     }
                     break;
-                case "<":
+                case '<':
                     if (cell > value) {
                         $(row).remove();
                     }
@@ -593,14 +593,14 @@ function routeManagementApplyFilter() {
 function displayRouteManagementFilters() {
     //Table head
     let th = [];
-    th.push("<th>Column</th>");
-    th.push("<th>Operation</th>");
-    th.push("<th>Value</th>");
-    th.push("<th></th>");
-    let thead = $("<thead></thead>").append($("<tr></tr>").append(th));
+    th.push('<th>Column</th>');
+    th.push('<th>Operation</th>');
+    th.push('<th>Value</th>');
+    th.push('<th></th>');
+    let thead = $('<thead></thead>').append($('<tr></tr>').append(th));
 
     //Table body
-    let tbody = $("<tbody></tbody>");
+    let tbody = $('<tbody></tbody>');
     settings.routeManagement.filter.forEach(function (fil) {
         let td = [];
         td.push(
@@ -608,14 +608,14 @@ function displayRouteManagementFilters() {
                 fil.columnCode +
                 '">' +
                 fil.column +
-                "</td>"
+                '</td>'
         );
-        td.push("<td>" + fil.operation + "</td>");
-        td.push("<td>" + fil.value + "</td>");
+        td.push('<td>' + fil.operation + '</td>');
+        td.push('<td>' + fil.value + '</td>');
         td.push(
             '<td><a class="aes-a-routeManagement-filter-delete-row" ><span class="fa fa-trash" title="Delete row"></span></a></td>'
         );
-        tbody.append($("<tr></tr>").append(td));
+        tbody.append($('<tr></tr>').append(td));
     });
 
     //Table foot
@@ -623,7 +623,7 @@ function displayRouteManagementFilters() {
     let option1 = [];
     settings.routeManagement.tableColumns.forEach(function (col) {
         option1.push(
-            '<option value="' + col.class + '">' + col.name + "</option>"
+            '<option value="' + col.class + '">' + col.name + '</option>'
         );
     });
     let select1 = $(
@@ -632,60 +632,60 @@ function displayRouteManagementFilters() {
 
     //Select value
     let option = [];
-    option.push("<option>=</option>");
-    option.push("<option>!=</option>");
-    option.push("<option>></option>");
-    option.push("<option><</option>");
+    option.push('<option>=</option>');
+    option.push('<option>!=</option>');
+    option.push('<option>></option>');
+    option.push('<option><</option>');
     let select = $(
         '<select id="aes-select-routeManagement-filter-operation" class="form-control"></select>'
     ).append(option);
     //Add button
-    let btn = $('<button class="btn btn-default"></button>').text("Add Row");
+    let btn = $('<button class="btn btn-default"></button>').text('Add Row');
     btn.click(function () {
         let td = [];
         let column = $(this)
-            .closest("tr")
-            .find("#aes-select-routeManagement-filter-column option:selected")
+            .closest('tr')
+            .find('#aes-select-routeManagement-filter-column option:selected')
             .text();
         let columnVal = $(this)
-            .closest("tr")
-            .find("#aes-select-routeManagement-filter-column")
+            .closest('tr')
+            .find('#aes-select-routeManagement-filter-column')
             .val();
         let operation = $(this)
-            .closest("tr")
+            .closest('tr')
             .find(
-                "#aes-select-routeManagement-filter-operation option:selected"
+                '#aes-select-routeManagement-filter-operation option:selected'
             )
             .text();
         let value = $(this)
-            .closest("tr")
-            .find("#aes-select-routeManagement-filter-value")
+            .closest('tr')
+            .find('#aes-select-routeManagement-filter-value')
             .val();
         td.push(
             '<td><input type="hidden" value="' +
                 columnVal +
                 '">' +
                 column +
-                "</td>"
+                '</td>'
         );
-        td.push("<td>" + operation + "</td>");
-        td.push("<td>" + value + "</td>");
+        td.push('<td>' + operation + '</td>');
+        td.push('<td>' + value + '</td>');
         td.push(
             '<td><a class="aes-a-routeManagement-filter-delete-row" ><span class="fa fa-trash" title="Delete row"></span></a></td>'
         );
 
-        tbody.append($("<tr></tr>").append(td));
+        tbody.append($('<tr></tr>').append(td));
     });
 
     //Footer rows
     let tf = [];
-    tf.push($("<td></td>").html(select1));
-    tf.push($("<td></td>").html(select));
+    tf.push($('<td></td>').html(select1));
+    tf.push($('<td></td>').html(select));
     tf.push(
         '<td><input id="aes-select-routeManagement-filter-value" type="text" class="form-control" style="min-width: 50px;"></td>'
     );
-    tf.push($("<td></td>").append(btn));
-    let tfoot = $("<tfoot></tfoot>").append($("<tr></tr>").append(tf));
+    tf.push($('<td></td>').append(btn));
+    let tfoot = $('<tfoot></tfoot>').append($('<tr></tr>').append(tf));
     let table = $(
         '<table class="table table-bordered table-striped table-hover" id="aes-table-routeManagement-filter"></table>'
     ).append(thead, tbody, tfoot);
@@ -695,11 +695,11 @@ function displayRouteManagementFilters() {
 
     //
     let saveBtn = $('<button class="btn btn-default">apply filter</button>');
-    let saveSpan = $("<span></span>");
+    let saveSpan = $('<span></span>');
 
     //Closable legend
-    let link = $('<a style="cursor: pointer;"></a>').text("Filters");
-    let legend = $("<legend></legend>").html(link);
+    let link = $('<a style="cursor: pointer;"></a>').text('Filters');
+    let legend = $('<legend></legend>').html(link);
     link.click(function () {
         divForAll.toggle();
     });
@@ -709,31 +709,31 @@ function displayRouteManagementFilters() {
         saveBtn,
         saveSpan
     );
-    let fieldset = $("<fieldset></fieldset>").append(legend, divForAll);
+    let fieldset = $('<fieldset></fieldset>').append(legend, divForAll);
     let div = $('<div class="col-md-4"></div>').append(fieldset);
 
     //Delete row for filter row
-    table.on("click", ".aes-a-routeManagement-filter-delete-row", function () {
-        $(this).closest("tr").remove();
+    table.on('click', '.aes-a-routeManagement-filter-delete-row', function () {
+        $(this).closest('tr').remove();
     });
 
     //Save Button
     saveBtn.click(function () {
-        saveSpan.removeClass().addClass("warning").text(" saving...");
+        saveSpan.removeClass().addClass('warning').text(' saving...');
         let filter = [];
-        $("#aes-table-routeManagement-filter tbody tr").each(function () {
+        $('#aes-table-routeManagement-filter tbody tr').each(function () {
             filter.push({
-                columnCode: $(this).find("input").val(),
-                column: $(this).find("td:eq(0)").text(),
-                operation: $(this).find("td:eq(1)").text(),
-                value: $(this).find("td:eq(2)").text(),
+                columnCode: $(this).find('input').val(),
+                column: $(this).find('td:eq(0)').text(),
+                operation: $(this).find('td:eq(1)').text(),
+                value: $(this).find('td:eq(2)').text(),
             });
         });
         settings.routeManagement.filter = filter;
         chrome.storage.local.set({ settings: settings }, function () {
-            saveSpan.removeClass().addClass("warning").text(" filtering...");
+            saveSpan.removeClass().addClass('warning').text(' filtering...');
             routeManagementApplyFilter();
-            saveSpan.removeClass().addClass("good").text(" done!");
+            saveSpan.removeClass().addClass('good').text(' done!');
         });
     });
 
@@ -743,11 +743,11 @@ function displayRouteManagementFilters() {
 function displayRouteManagementColumns() {
     //Table Head
     let th = [];
-    th.push("<th>Show</th>");
-    th.push("<th>Column</th>");
-    let thead = $("<thead></thead>").append($("<tr></tr>").append(th));
+    th.push('<th>Show</th>');
+    th.push('<th>Column</th>');
+    let thead = $('<thead></thead>').append($('<tr></tr>').append(th));
     //Table body
-    let tbody = $("<tbody></tbody>");
+    let tbody = $('<tbody></tbody>');
 
     settings.routeManagement.tableColumns.forEach(function (col) {
         let td = [];
@@ -764,8 +764,8 @@ function displayRouteManagementColumns() {
             );
         }
         //Name
-        td.push("<td>" + col.name + "</td>");
-        tbody.append($("<tr></tr>").append(td));
+        td.push('<td>' + col.name + '</td>');
+        tbody.append($('<tr></tr>').append(td));
     });
 
     let table = $(
@@ -776,20 +776,20 @@ function displayRouteManagementColumns() {
     ).append(table);
 
     //Closable legend
-    let link = $('<a style="cursor: pointer;"></a>').text("Columns");
-    let legend = $("<legend></legend>").html(link);
+    let link = $('<a style="cursor: pointer;"></a>').text('Columns');
+    let legend = $('<legend></legend>').html(link);
     link.click(function () {
-        $("#aes-div-routeManagement-columns").toggle();
+        $('#aes-div-routeManagement-columns').toggle();
     });
 
-    let fieldset = $("<fieldset></fieldset>").append(legend, divTable);
+    let fieldset = $('<fieldset></fieldset>').append(legend, divTable);
     let div = $('<div class="col-md-4"></div>').append(fieldset);
     return div;
 }
 
 function generateRouteManagementTable(scheduleData) {
     //Remove table
-    $("#aes-div-routeManagement").remove();
+    $('#aes-div-routeManagement').remove();
     //Dates
     let dates = [];
     for (let date in scheduleData.date) {
@@ -805,25 +805,25 @@ function generateRouteManagementTable(scheduleData) {
     let columns = settings.routeManagement.tableColumns;
 
     //Generate table head
-    let thead = $("<thead></thead>");
+    let thead = $('<thead></thead>');
     let th = [];
     //Check box
     let checkbox = $('<input type="checkbox">');
     checkbox.change(function () {
         if (this.checked) {
-            $("#aes-table-routeManagement tbody tr").each(function () {
-                $(this).find("input").prop("checked", true);
+            $('#aes-table-routeManagement tbody tr').each(function () {
+                $(this).find('input').prop('checked', true);
             });
         } else {
-            $("#aes-table-routeManagement tbody tr").each(function () {
-                $(this).find("input").prop("checked", false);
+            $('#aes-table-routeManagement tbody tr').each(function () {
+                $(this).find('input').prop('checked', false);
             });
         }
     });
-    th.push($("<th></th>").html(checkbox));
+    th.push($('<th></th>').html(checkbox));
     columns.forEach(function (col) {
         if (col.show) {
-            let sort = $("<a></a>").html(col.name);
+            let sort = $('<a></a>').html(col.name);
             sort.click(function () {
                 routeManagementSortTable(col.class, col.number);
             });
@@ -831,11 +831,11 @@ function generateRouteManagementTable(scheduleData) {
         }
     });
     //Add open inventory column
-    th.push($("<th>Action</th>"));
+    th.push($('<th>Action</th>'));
 
-    thead.append($("<tr></tr>").append(th));
+    thead.append($('<tr></tr>').append(th));
     //Generate table rows
-    let tbody = $("<tbody></tbody>");
+    let tbody = $('<tbody></tbody>');
     let uniqueOD = [];
     schedule.forEach(function (od) {
         //ODs for analysis
@@ -872,12 +872,12 @@ function generateRouteManagementTable(scheduleData) {
             if (col.show) {
                 if (col.value) {
                     cell.push(
-                        $("<td></td>")
+                        $('<td></td>')
                             .addClass(col.class)
                             .text(cellValue[col.value])
                     );
                 } else {
-                    cell.push($("<td></td>").addClass(col.class));
+                    cell.push($('<td></td>').addClass(col.class));
                 }
             }
         });
@@ -887,10 +887,10 @@ function generateRouteManagementTable(scheduleData) {
         let invBtn =
             '<a class="btn btn-xs btn-default" href="https://' +
             server +
-            ".airlinesim.aero/app/com/inventory/" +
+            '.airlinesim.aero/app/com/inventory/' +
             rowId +
             '">Inventory</a>';
-        cell.push($("<td></td>").html(invBtn));
+        cell.push($('<td></td>').html(invBtn));
 
         let row = $('<tr id="aes-row-' + rowId + '"></tr>').append(cell);
         tbody.append(row);
@@ -901,15 +901,15 @@ function generateRouteManagementTable(scheduleData) {
     let divTable = $(
         '<div id="aes-div-routeManagement" class="as-table-well"></div>'
     ).append(table);
-    $("#aes-div-dashboard-routeManagement").append(divTable);
+    $('#aes-div-dashboard-routeManagement').append(divTable);
     //Analysis columns
     //Get unique ODs
     uniqueOD = [...new Set(uniqueOD)];
     for (let i = 0; i < uniqueOD.length; i++) {
         let origin = uniqueOD[i].substring(0, 3);
         let dest = uniqueOD[i].substring(3, 6);
-        let keyOutbound = server + airline.id + origin + dest + "routeAnalysis";
-        let keyInbound = server + airline.id + dest + origin + "routeAnalysis";
+        let keyOutbound = server + airline.id + origin + dest + 'routeAnalysis';
+        let keyInbound = server + airline.id + dest + origin + 'routeAnalysis';
         chrome.storage.local.get([keyOutbound], function (outboundData) {
             chrome.storage.local.get([keyInbound], function (inboundData) {
                 let outAnalysis = outboundData[keyOutbound];
@@ -926,7 +926,7 @@ function generateRouteManagementTable(scheduleData) {
                 let routeIndexPax, routeIndexCargo;
                 if (outAnalysis && inAnalysis) {
                     if (outDates.analysis && inDates.analysis) {
-                        let indexType = ["all", "pax", "cargo"];
+                        let indexType = ['all', 'pax', 'cargo'];
                         indexType.forEach(function (type) {
                             let outIndex = getRouteAnalysisIndex(
                                 outAnalysis.date[outDates.analysis].data,
@@ -953,15 +953,15 @@ function generateRouteManagementTable(scheduleData) {
 }
 
 function routeManagementSortTable(column, number) {
-    let tableRows = $("#aes-table-routeManagement tbody tr");
-    let tableBody = $("#aes-table-routeManagement tbody");
+    let tableRows = $('#aes-table-routeManagement tbody tr');
+    let tableBody = $('#aes-table-routeManagement tbody');
     tableBody.empty();
     let indexes = [];
     tableRows.each(function () {
         if (number) {
             let value = parseInt(
                 $(this)
-                    .find("." + column)
+                    .find('.' + column)
                     .text(),
                 10
             );
@@ -973,7 +973,7 @@ function routeManagementSortTable(column, number) {
         } else {
             indexes.push(
                 $(this)
-                    .find("." + column)
+                    .find('.' + column)
                     .text()
             );
         }
@@ -1011,7 +1011,7 @@ function routeManagementSortTable(column, number) {
             if (number) {
                 let value = parseInt(
                     $(tableRows[j])
-                        .find("." + column)
+                        .find('.' + column)
                         .text(),
                     10
                 );
@@ -1025,7 +1025,7 @@ function routeManagementSortTable(column, number) {
             } else {
                 if (
                     $(tableRows[j])
-                        .find("." + column)
+                        .find('.' + column)
                         .text() == sorted[i]
                 ) {
                     tableBody.append($(tableRows[j]));
@@ -1038,139 +1038,139 @@ function routeManagementSortTable(column, number) {
 
 function updateRouteAnalysisColumns(data, dates, routeIndex) {
     if (data) {
-        let rowId = "#aes-row-" + data.origin + data.destination;
+        let rowId = '#aes-row-' + data.origin + data.destination;
 
         if (dates.analysis) {
             //Analysis date
-            $(rowId + " .aes-analysisDate").text(
+            $(rowId + ' .aes-analysisDate').text(
                 AES.formatDateString(dates.analysis)
             );
 
             //Pricing date
             if (dates.pricing) {
-                $(rowId + " .aes-pricingDate").text(
+                $(rowId + ' .aes-pricingDate').text(
                     AES.formatDateString(dates.pricing)
                 );
             }
 
             //Pax Load
-            $(rowId + " .aes-paxLoad").html(
+            $(rowId + ' .aes-paxLoad').html(
                 displayLoad(
-                    getRouteAnalysisLoad(data.date[dates.analysis].data, "pax")
+                    getRouteAnalysisLoad(data.date[dates.analysis].data, 'pax')
                 )
             );
 
             //Cargo Load
-            $(rowId + " .aes-cargoLoad").html(
+            $(rowId + ' .aes-cargoLoad').html(
                 displayLoad(
                     getRouteAnalysisLoad(
                         data.date[dates.analysis].data,
-                        "cargo"
+                        'cargo'
                     )
                 )
             );
 
             //All Load
-            $(rowId + " .aes-load").html(
+            $(rowId + ' .aes-load').html(
                 displayLoad(
-                    getRouteAnalysisLoad(data.date[dates.analysis].data, "all")
+                    getRouteAnalysisLoad(data.date[dates.analysis].data, 'all')
                 )
             );
 
             //PAX Index
-            $(rowId + " .aes-paxIndex").html(
+            $(rowId + ' .aes-paxIndex').html(
                 displayIndex(
-                    getRouteAnalysisIndex(data.date[dates.analysis].data, "pax")
+                    getRouteAnalysisIndex(data.date[dates.analysis].data, 'pax')
                 )
             );
 
             //Cargo Index
-            $(rowId + " .aes-cargoIndex").html(
+            $(rowId + ' .aes-cargoIndex').html(
                 displayIndex(
                     getRouteAnalysisIndex(
                         data.date[dates.analysis].data,
-                        "cargo"
+                        'cargo'
                     )
                 )
             );
 
             //PAX Index
-            $(rowId + " .aes-index").html(
+            $(rowId + ' .aes-index').html(
                 displayIndex(
-                    getRouteAnalysisIndex(data.date[dates.analysis].data, "all")
+                    getRouteAnalysisIndex(data.date[dates.analysis].data, 'all')
                 )
             );
 
             if (dates.analysisOneBefore) {
                 //Previous analysis date
-                $(rowId + " .aes-analysisPreDate").text(
+                $(rowId + ' .aes-analysisPreDate').text(
                     AES.formatDateString(dates.analysisOneBefore)
                 );
 
                 //Pax Load Delta
-                $(rowId + " .aes-paxLoadDelta").html(
+                $(rowId + ' .aes-paxLoadDelta').html(
                     displayRouteAnalysisLoadDelta(
                         data.date[dates.analysis].data,
                         data.date[dates.analysisOneBefore].data,
-                        "pax"
+                        'pax'
                     )
                 );
                 //Cargo Load Delta
-                $(rowId + " .aes-cargoLoadDelta").html(
+                $(rowId + ' .aes-cargoLoadDelta').html(
                     displayRouteAnalysisLoadDelta(
                         data.date[dates.analysis].data,
                         data.date[dates.analysisOneBefore].data,
-                        "cargo"
+                        'cargo'
                     )
                 );
                 //All Load Delta
-                $(rowId + " .aes-loadDelta").html(
+                $(rowId + ' .aes-loadDelta').html(
                     displayRouteAnalysisLoadDelta(
                         data.date[dates.analysis].data,
                         data.date[dates.analysisOneBefore].data,
-                        "all"
+                        'all'
                     )
                 );
 
                 //PAX Index Delta
-                $(rowId + " .aes-paxIndexDelta").html(
+                $(rowId + ' .aes-paxIndexDelta').html(
                     displayRouteAnalysisIndexDelta(
                         data.date[dates.analysis].data,
                         data.date[dates.analysisOneBefore].data,
-                        "pax"
+                        'pax'
                     )
                 );
                 //Cargo Index Delta
-                $(rowId + " .aes-cargoIndexDelta").html(
+                $(rowId + ' .aes-cargoIndexDelta').html(
                     displayRouteAnalysisIndexDelta(
                         data.date[dates.analysis].data,
                         data.date[dates.analysisOneBefore].data,
-                        "cargo"
+                        'cargo'
                     )
                 );
                 //PAX Index Delta
-                $(rowId + " .aes-indexDelta").html(
+                $(rowId + ' .aes-indexDelta').html(
                     displayRouteAnalysisIndexDelta(
                         data.date[dates.analysis].data,
                         data.date[dates.analysisOneBefore].data,
-                        "all"
+                        'all'
                     )
                 );
             }
 
             //Route Index
             if (routeIndex.pax) {
-                $(rowId + " .aes-routeIndexPax").html(
+                $(rowId + ' .aes-routeIndexPax').html(
                     displayIndex(routeIndex.pax)
                 );
             }
             if (routeIndex.cargo) {
-                $(rowId + " .aes-routeIndexCargo").html(
+                $(rowId + ' .aes-routeIndexCargo').html(
                     displayIndex(routeIndex.cargo)
                 );
             }
             if (routeIndex.all) {
-                $(rowId + " .aes-routeIndex").html(
+                $(rowId + ' .aes-routeIndex').html(
                     displayIndex(routeIndex.all)
                 );
             }
@@ -1189,11 +1189,11 @@ function updateRouteAnalysisColumns(data, dates, routeIndex) {
 
     let outDates = getInvPricingAnalaysisPricingDate(dataOut.date);
     if (outDates.analysis) {
-        $("#aes-row-invPricing-" + origin + dest + "-analysis", tbody).text(
+        $('#aes-row-invPricing-' + origin + dest + '-analysis', tbody).text(
             AES.formatDateString(outDates.analysis)
         );
         let outIndex = dataOut.date[outDates.analysis].routeIndex;
-        let td = $("#aes-row-invPricing-" + origin + dest + "-OWindex", tbody);
+        let td = $('#aes-row-invPricing-' + origin + dest + '-OWindex', tbody);
         td.html(displayIndex(outIndex));
         if (outDates.analysisOneBefore) {
             let outIndexChange =
@@ -1203,7 +1203,7 @@ function updateRouteAnalysisColumns(data, dates, routeIndex) {
         }
     }
     if (outDates.pricing) {
-        $("#aes-row-invPricing-" + origin + dest + "-pricing", tbody).text(
+        $('#aes-row-invPricing-' + origin + dest + '-pricing', tbody).text(
             AES.formatDateString(outDates.pricing)
         );
     }
@@ -1214,16 +1214,16 @@ function displayRouteAnalysisLoadDelta(dataCurrent, dataPrevious, type) {
     let preLoad = getRouteAnalysisLoad(dataPrevious, type);
     if (load && preLoad) {
         let diff = load - preLoad;
-        let span = $("<span></span>");
+        let span = $('<span></span>');
         if (diff > 0) {
-            span.addClass("good").text("+" + diff + "%");
+            span.addClass('good').text('+' + diff + '%');
             return span;
         }
         if (diff < 0) {
-            span.addClass("bad").text(diff + "%");
+            span.addClass('bad').text(diff + '%');
             return span;
         }
-        span.addClass("warning").text(diff + "%");
+        span.addClass('warning').text(diff + '%');
         return span;
     }
 }
@@ -1233,16 +1233,16 @@ function displayRouteAnalysisIndexDelta(dataCurrent, dataPrevious, type) {
     let preIndex = getRouteAnalysisIndex(dataPrevious, type);
     if (index && preIndex) {
         let diff = index - preIndex;
-        let span = $("<span></span>");
+        let span = $('<span></span>');
         if (diff > 0) {
-            span.addClass("good").text("+" + diff);
+            span.addClass('good').text('+' + diff);
             return span;
         }
         if (diff < 0) {
-            span.addClass("bad").text(diff);
+            span.addClass('bad').text(diff);
             return span;
         }
-        span.addClass("warning").text(diff);
+        span.addClass('warning').text(diff);
         return span;
     }
 }
@@ -1250,14 +1250,14 @@ function displayRouteAnalysisIndexDelta(dataCurrent, dataPrevious, type) {
 function getRouteAnalysisLoad(data, type) {
     let cmp = [];
     switch (type) {
-        case "all":
-            cmp = ["Y", "C", "F", "Cargo"];
+        case 'all':
+            cmp = ['Y', 'C', 'F', 'Cargo'];
             break;
-        case "pax":
-            cmp = ["Y", "C", "F"];
+        case 'pax':
+            cmp = ['Y', 'C', 'F'];
             break;
-        case "cargo":
-            cmp = ["Cargo"];
+        case 'cargo':
+            cmp = ['Cargo'];
             break;
         default:
         // code block
@@ -1279,16 +1279,16 @@ function getRouteAnalysisLoad(data, type) {
 
 function displayLoad(load) {
     if (load) {
-        let span = $("<span></span>");
+        let span = $('<span></span>');
         if (load >= 70) {
-            span.addClass("good").text(load + "%");
+            span.addClass('good').text(load + '%');
             return span;
         }
         if (load < 40) {
-            span.addClass("bad").text(load + "%");
+            span.addClass('bad').text(load + '%');
             return span;
         }
-        span.addClass("warning").text(load + "%");
+        span.addClass('warning').text(load + '%');
         return span;
     }
 }
@@ -1297,14 +1297,14 @@ function getRouteAnalysisIndex(data, type) {
     let cmp = [];
     let index = 0;
     switch (type) {
-        case "all":
-            cmp = ["Y", "C", "F", "Cargo"];
+        case 'all':
+            cmp = ['Y', 'C', 'F', 'Cargo'];
             break;
-        case "pax":
-            cmp = ["Y", "C", "F"];
+        case 'pax':
+            cmp = ['Y', 'C', 'F'];
             break;
-        case "cargo":
-            cmp = ["Cargo"];
+        case 'cargo':
+            cmp = ['Cargo'];
             break;
         default:
             cmp = 0;
@@ -1361,39 +1361,39 @@ function getRouteAnalysisImportantDates(dates) {
 }
 
 function displayIndex(index) {
-    let span = $("<span></span>");
+    let span = $('<span></span>');
     if (index >= 90) {
-        return span.addClass("good").text(index);
+        return span.addClass('good').text(index);
     }
     if (index <= 50) {
-        return span.addClass("bad").text(index);
+        return span.addClass('bad').text(index);
     }
-    return span.addClass("warning").text(index);
+    return span.addClass('warning').text(index);
 }
 
 function displayIndexChange(index) {
     if (index > 0) {
-        return ' (<span class="good">+' + index + "</span>)";
+        return ' (<span class="good">+' + index + '</span>)';
     }
     if (index < 0) {
-        return ' (<span class="bad">' + index + "</span>)";
+        return ' (<span class="bad">' + index + '</span>)';
     }
-    return ' (<span class="warning">' + index + "</span>)";
+    return ' (<span class="warning">' + index + '</span>)';
 }
 //Display General
 function displayGeneral() {
-    let mainDiv = $("#aes-div-dashboard");
+    let mainDiv = $('#aes-div-dashboard');
     mainDiv.empty();
 
     //Table
     //Head cells
-    let th1 = $("<th>Area</th>");
-    let th2 = $("<th>Status</th>");
-    let th3 = $("<th>Action</th>");
-    let headRow = $("<tr></tr>").append(th1, th2, th3);
-    let thead = $("<thead></thead>").append(headRow);
+    let th1 = $('<th>Area</th>');
+    let th2 = $('<th>Status</th>');
+    let th3 = $('<th>Action</th>');
+    let headRow = $('<tr></tr>').append(th1, th2, th3);
+    let thead = $('<thead></thead>').append(headRow);
     //Body cells
-    let tbody = $("<tbody></tbody>");
+    let tbody = $('<tbody></tbody>');
     generalAddScheduleRow(tbody);
     generalAddPersonnelManagementRow(tbody);
 
@@ -1402,7 +1402,7 @@ function displayGeneral() {
     ).append(thead, tbody);
     //Build layout
     let divTable = $('<div class="as-table-well"></div>').append(table);
-    let title = $("<h3></h3>").text("General");
+    let title = $('<h3></h3>').text('General');
     let div = $(
         '<div id="aes-div-dashboard-general" class="as-panel"></div>'
     ).append(divTable);
@@ -1423,7 +1423,7 @@ function displayCompetitorMonitoring() {
     } else {
         // Ensure Remove airline column is visible for existing users
         let removeColumn = settings.competitorMonitoring.tableColumns.find(
-            (col) => col.field === "actionRemoveAirline"
+            (col) => col.field === 'actionRemoveAirline'
         );
         if (removeColumn && removeColumn.visible === 0) {
             removeColumn.visible = 1;
@@ -1434,10 +1434,10 @@ function displayCompetitorMonitoring() {
     //Display airlines table
     displayCompetitorMonitoringAirlinesTable(div);
 
-    let mainDiv = $("#aes-div-dashboard");
+    let mainDiv = $('#aes-div-dashboard');
     //Build layout
     mainDiv.empty();
-    let title = $("<h3></h3>").text("Competitor Monitoring");
+    let title = $('<h3></h3>').text('Competitor Monitoring');
     mainDiv.append(title, div);
 }
 
@@ -1448,14 +1448,14 @@ function displayCompetitorMonitoringAirlinesTable(div) {
         //Get data
         for (let key in items) {
             if (items[key].type) {
-                if (items[key].type == "competitorMonitoring") {
+                if (items[key].type == 'competitorMonitoring') {
                     if (items[key].server == server) {
                         if (items[key].tracking) {
                             compAirlines.push(items[key]);
                         }
                     }
                 }
-                if (items[key].type == "schedule") {
+                if (items[key].type == 'schedule') {
                     if (items[key].server == server) {
                         let airline = items[key].airline;
                         compAirlinesSchedule[airline.id] = items[key];
@@ -1475,7 +1475,7 @@ function displayCompetitorMonitoringAirlinesTable(div) {
             settings.competitorMonitoring.tableColumns.forEach(function (col) {
                 if (col.visible) {
                     //Sort
-                    let sort = $("<a></a>").html(col.text);
+                    let sort = $('<a></a>').html(col.text);
                     sort.click(function () {
                         CompetitorMonitoringSortTable(col.field, col.number);
                     });
@@ -1496,8 +1496,8 @@ function displayCompetitorMonitoringAirlinesTable(div) {
                     )
                 );
             }
-            hrows.push($("<tr></tr>").append(th1));
-            hrows.push($("<tr></tr>").append(th));
+            hrows.push($('<tr></tr>').append(th1));
+            hrows.push($('<tr></tr>').append(th));
 
             //Data columns
 
@@ -1655,12 +1655,12 @@ function displayCompetitorMonitoringAirlinesTable(div) {
                         hubArray.sort(function (a, b) {
                             return b[1] - a[1];
                         });
-                        data.scheduleHubs = "";
+                        data.scheduleHubs = '';
                         hubArray.forEach(function (hubA, index) {
                             if (index) {
-                                data.scheduleHubs += ", ";
+                                data.scheduleHubs += ', ';
                             }
-                            data.scheduleHubs += hubA[0] + " (" + hubA[1] + ")";
+                            data.scheduleHubs += hubA[0] + ' (' + hubA[1] + ')';
                         });
 
                         //Previous schedule data
@@ -1729,9 +1729,9 @@ function displayCompetitorMonitoringAirlinesTable(div) {
                             '" class="btn btn-xs btn-default">Schedule</button>'
                     );
                     //Create schedule table
-                    $("#aes-div-dashboard").on(
-                        "click",
-                        "button#aes-compMon-btn-schedule-" + data.airlineId,
+                    $('#aes-div-dashboard').on(
+                        'click',
+                        'button#aes-compMon-btn-schedule-' + data.airlineId,
                         function () {
                             displayCompetitorMonitoringAirlineScheduleTable(
                                 div,
@@ -1748,12 +1748,12 @@ function displayCompetitorMonitoringAirlinesTable(div) {
                         '" class="btn btn-xs btn-default">Remove</button>'
                 );
                 //Remove airline action
-                $("#aes-div-dashboard").on(
-                    "click",
-                    "button#aes-compMon-btn-remove-" + data.airlineId,
+                $('#aes-div-dashboard').on(
+                    'click',
+                    'button#aes-compMon-btn-remove-' + data.airlineId,
                     function () {
                         let key =
-                            server + data.airlineId + "competitorMonitoring";
+                            server + data.airlineId + 'competitorMonitoring';
                         let remove = $(this);
                         chrome.storage.local.get(
                             [key],
@@ -1765,7 +1765,7 @@ function displayCompetitorMonitoringAirlinesTable(div) {
                                         [compData.key]: compData,
                                     },
                                     function () {
-                                        $(remove).closest("tr").remove();
+                                        $(remove).closest('tr').remove();
                                     }
                                 );
                             }
@@ -1786,7 +1786,7 @@ function displayCompetitorMonitoringAirlinesTable(div) {
                         );
                     }
                 });
-                rows.push($("<tr></tr>").append(td));
+                rows.push($('<tr></tr>').append(td));
             });
         } else {
             rows.push(
@@ -1794,8 +1794,8 @@ function displayCompetitorMonitoringAirlinesTable(div) {
             );
         }
 
-        let thead = $("<thead></thead>").append(hrows);
-        let tbody = $("<tbody></tbody>").append(rows);
+        let thead = $('<thead></thead>').append(hrows);
+        let tbody = $('<tbody></tbody>').append(rows);
 
         let table = $(
             '<table id="aes-table-competitorMonitoring" class="table table-bordered table-striped table-hover"></table>'
@@ -1825,65 +1825,65 @@ function displayCompetitorMonitoringAirlineScheduleTable(
     if (data.scheduleDateUse) {
         let columns = [
             {
-                field: "schedOrigin",
-                text: "Origin",
-                headGroup: "Schedule",
+                field: 'schedOrigin',
+                text: 'Origin',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 0,
             },
             {
-                field: "schedDestination",
-                text: "Destination",
-                headGroup: "Schedule",
+                field: 'schedDestination',
+                text: 'Destination',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 0,
             },
             {
-                field: "schedHub",
-                text: "Hub",
-                headGroup: "Schedule",
+                field: 'schedHub',
+                text: 'Hub',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 0,
             },
             {
-                field: "schedOd",
-                text: "OD",
-                headGroup: "Schedule",
+                field: 'schedOd',
+                text: 'OD',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 0,
             },
             {
-                field: "schedDir",
-                text: "Direction",
-                headGroup: "Schedule",
+                field: 'schedDir',
+                text: 'Direction',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 0,
             },
             {
-                field: "schedFltNr",
-                text: "# of flight numbers",
-                headGroup: "Schedule",
+                field: 'schedFltNr',
+                text: '# of flight numbers',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 1,
             },
             {
-                field: "schedPaxFreq",
-                text: "PAX frequency",
-                headGroup: "Schedule",
+                field: 'schedPaxFreq',
+                text: 'PAX frequency',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 1,
             },
             {
-                field: "schedCargoFreq",
-                text: "Cargo frequency",
-                headGroup: "Schedule",
+                field: 'schedCargoFreq',
+                text: 'Cargo frequency',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 1,
             },
             {
-                field: "schedTotalFreq",
-                text: "Total Frequency",
-                headGroup: "Schedule",
+                field: 'schedTotalFreq',
+                text: 'Total Frequency',
+                headGroup: 'Schedule',
                 visible: 1,
                 number: 1,
             },
@@ -1893,19 +1893,19 @@ function displayCompetitorMonitoringAirlineScheduleTable(
         columns.forEach(function (col) {
             if (col.visible) {
                 //Sort
-                let sort = $("<a></a>").html(col.text);
+                let sort = $('<a></a>').html(col.text);
                 sort.click(function () {
                     SortTable(
                         col.field,
                         col.number,
-                        "aes-table-competitorMonitoring-airline-schedule",
-                        "aes-comp-sched-"
+                        'aes-table-competitorMonitoring-airline-schedule',
+                        'aes-comp-sched-'
                     );
                 });
                 th.push($('<th style="cursor: pointer;"></th>').html(sort));
             }
         });
-        hrow.push($("<tr></tr>").append(th));
+        hrow.push($('<tr></tr>').append(th));
         //Table Body
         scheduleData.date[data.scheduleDateUse].schedule.forEach(function (od) {
             let td = [];
@@ -1942,7 +1942,7 @@ function displayCompetitorMonitoringAirlineScheduleTable(
                     );
                 }
             });
-            rows.push($("<tr></tr>").append(td));
+            rows.push($('<tr></tr>').append(td));
         });
     } else {
         rows.push(
@@ -1951,8 +1951,8 @@ function displayCompetitorMonitoringAirlineScheduleTable(
     }
 
     //Build layout
-    let thead = $("<thead></thead>").append(hrow);
-    let tbody = $("<tbody></tbody>").append(rows);
+    let thead = $('<thead></thead>').append(hrow);
+    let tbody = $('<tbody></tbody>').append(rows);
     let table = $(
         '<table id="aes-table-competitorMonitoring-airline-schedule" class="table table-bordered table-striped table-hover"></table>'
     ).append(thead, tbody);
@@ -1964,7 +1964,7 @@ function displayCompetitorMonitoringAirlineScheduleTable(
     );
     let panelDiv = $('<div class="as-panel"></div>').append(button, tableWell);
     let heading = $(
-        "<h4>" + data.airlineName + " " + data.airlineCode + " schedule</h4>"
+        '<h4>' + data.airlineName + ' ' + data.airlineCode + ' schedule</h4>'
     );
     let div = $('<div id="aes-compMonitor-schedule"></div>').append(
         heading,
@@ -1981,11 +1981,11 @@ function displayCompetitorMonitoringAirlineScheduleTable(
 function displayCompetitorMonitoringAirlinesTableColumns() {
     //Table Head
     let th = [];
-    th.push("<th>Show</th>");
-    th.push("<th>Column</th>");
-    let thead = $("<thead></thead>").append($("<tr></tr>").append(th));
+    th.push('<th>Show</th>');
+    th.push('<th>Column</th>');
+    let thead = $('<thead></thead>').append($('<tr></tr>').append(th));
     //Table body
-    let tbody = $("<tbody></tbody>");
+    let tbody = $('<tbody></tbody>');
 
     settings.competitorMonitoring.tableColumns.forEach(function (col) {
         let td = [];
@@ -2002,8 +2002,8 @@ function displayCompetitorMonitoringAirlinesTableColumns() {
             );
         }
         //Name
-        td.push("<td>" + col.text + "</td>");
-        tbody.append($("<tr></tr>").append(td));
+        td.push('<td>' + col.text + '</td>');
+        tbody.append($('<tr></tr>').append(td));
     });
 
     let table = $(
@@ -2013,7 +2013,7 @@ function displayCompetitorMonitoringAirlinesTableColumns() {
         '<div id="aes-div-competitorMonitoring-columns" class="as-table-well" style="display: none;"></div>'
     ).append(table);
     //Columns selector Checkbox listener
-    $("input", table).change(function () {
+    $('input', table).change(function () {
         let show;
         if (this.checked) {
             show = 1;
@@ -2029,19 +2029,19 @@ function displayCompetitorMonitoringAirlinesTableColumns() {
         chrome.storage.local.set({ settings: settings }, function () {});
     });
     //Closable legend
-    let link = $('<a style="cursor: pointer;"></a>').text("Columns");
-    let legend = $("<legend></legend>").html(link);
+    let link = $('<a style="cursor: pointer;"></a>').text('Columns');
+    let legend = $('<legend></legend>').html(link);
     link.click(function () {
-        $("#aes-div-competitorMonitoring-columns").toggle();
+        $('#aes-div-competitorMonitoring-columns').toggle();
     });
-    let fieldset = $("<fieldset></fieldset>").append(legend, divTable);
+    let fieldset = $('<fieldset></fieldset>').append(legend, divTable);
     let div = $('<div class="col-md-4"></div>').append(fieldset);
     return div;
 }
 
 function displayCompetitorMonitoringAirlinesTableOptions() {
-    let divFieldset = $("<fieldset></fieldset>").html(
-        "<legend>Options</legend>"
+    let divFieldset = $('<fieldset></fieldset>').html(
+        '<legend>Options</legend>'
     );
     let btn = $(
         '<button type="button" class="btn btn-default">reload table</button>'
@@ -2057,15 +2057,15 @@ function displayCompetitorMonitoringAirlinesTableOptions() {
 }
 
 function CompetitorMonitoringSortTable(column, number) {
-    let tableRows = $("#aes-table-competitorMonitoring tbody tr");
-    let tableBody = $("#aes-table-competitorMonitoring tbody");
+    let tableRows = $('#aes-table-competitorMonitoring tbody tr');
+    let tableBody = $('#aes-table-competitorMonitoring tbody');
     tableBody.empty();
     let indexes = [];
     tableRows.each(function () {
         if (number) {
             let value = parseInt(
                 $(this)
-                    .find(".aes-" + column)
+                    .find('.aes-' + column)
                     .text(),
                 10
             );
@@ -2077,7 +2077,7 @@ function CompetitorMonitoringSortTable(column, number) {
         } else {
             indexes.push(
                 $(this)
-                    .find(".aes-" + column)
+                    .find('.aes-' + column)
                     .text()
             );
         }
@@ -2115,7 +2115,7 @@ function CompetitorMonitoringSortTable(column, number) {
             if (number) {
                 let value = parseInt(
                     $(tableRows[j])
-                        .find(".aes-" + column)
+                        .find('.aes-' + column)
                         .text(),
                     10
                 );
@@ -2129,7 +2129,7 @@ function CompetitorMonitoringSortTable(column, number) {
             } else {
                 if (
                     $(tableRows[j])
-                        .find(".aes-" + column)
+                        .find('.aes-' + column)
                         .text() == sorted[i]
                 ) {
                     tableBody.append($(tableRows[j]));
@@ -2143,317 +2143,317 @@ function CompetitorMonitoringSortTable(column, number) {
 function setDefaultCompetitorMonitoringSettings() {
     let columns = [
         {
-            field: "airlineId",
-            text: "ID",
-            headGroup: "Airline",
+            field: 'airlineId',
+            text: 'ID',
+            headGroup: 'Airline',
             visible: 1,
             number: 1,
         },
         {
-            field: "airlineCode",
-            text: "Code",
-            headGroup: "Airline",
-            visible: 1,
-            number: 0,
-        },
-        {
-            field: "airlineName",
-            text: "Name",
-            headGroup: "Airline",
+            field: 'airlineCode',
+            text: 'Code',
+            headGroup: 'Airline',
             visible: 1,
             number: 0,
         },
         {
-            field: "overviewDate",
-            text: "Overview date",
-            headGroup: "Overview",
-            visible: 0,
-            number: 0,
-        },
-        {
-            field: "overviewPreDate",
-            text: "Overview previous date",
-            headGroup: "Overview",
-            visible: 0,
-            number: 0,
-        },
-        {
-            field: "overviewRating",
-            text: "Rating",
-            headGroup: "Overview",
+            field: 'airlineName',
+            text: 'Name',
+            headGroup: 'Airline',
             visible: 1,
             number: 0,
         },
         {
-            field: "overviewRatingDelta",
-            text: "Rating &Delta;",
-            headGroup: "Overview",
+            field: 'overviewDate',
+            text: 'Overview date',
+            headGroup: 'Overview',
             visible: 0,
             number: 0,
         },
         {
-            field: "overviewTotalPax",
-            text: "Total pax",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewTotalPaxDelta",
-            text: "Total pax &Delta;",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewTotalCargo",
-            text: "Total cargo",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewTotalCargoDelta",
-            text: "Total cargo &Delta;",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewStations",
-            text: "Stations",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewStationsDelta",
-            text: "Stations &Delta;",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewFleet",
-            text: "Fleet",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewFleetDelta",
-            text: "Fleet &Delta;",
-            headGroup: "Overview",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "overviewStaff",
-            text: "Staff",
-            headGroup: "Overview",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "overviewStaffDelta",
-            text: "Staff &Delta;",
-            headGroup: "Overview",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "fafWeek",
-            text: "Week",
-            headGroup: "Figures",
+            field: 'overviewPreDate',
+            text: 'Overview previous date',
+            headGroup: 'Overview',
             visible: 0,
             number: 0,
         },
         {
-            field: "fafWeekPre",
-            text: "Previous week",
-            headGroup: "Figures",
-            visible: 0,
-            number: 0,
-        },
-        {
-            field: "fafAirportsServed",
-            text: "Airports served",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "fafAirportsServedDelta",
-            text: "Airports served &Delta;",
-            headGroup: "Figures",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "fafOperatedFlights",
-            text: "Operated flights",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "fafOperatedFlightsDelta",
-            text: "Operated flights &Delta;",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "fafSeatsOffered",
-            text: "Seats offered",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "fafSeatsOfferedDelta",
-            text: "Seats offered &Delta;",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "fafsko",
-            text: "SKO",
-            headGroup: "Figures",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "fafskoDelta",
-            text: "SKO &Delta;",
-            headGroup: "Figures",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "fafCargoOffered",
-            text: "Cargo offered",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "fafCargoOfferedDelta",
-            text: "Cargo offered &Delta;",
-            headGroup: "Figures",
-            visible: 1,
-            number: 1,
-        },
-        {
-            field: "faffko",
-            text: "FKO",
-            headGroup: "Figures",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "faffkoDela",
-            text: "FKO &Delta;",
-            headGroup: "Figures",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "scheduleDate",
-            text: "Schedule Date",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 0,
-        },
-        {
-            field: "scheduleDatePre",
-            text: "Previous Schedule Date",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 0,
-        },
-        {
-            field: "scheduleHubs",
-            text: "Hubs (routes)",
-            headGroup: "Schedule",
+            field: 'overviewRating',
+            text: 'Rating',
+            headGroup: 'Overview',
             visible: 1,
             number: 0,
         },
         {
-            field: "scheduleFltNr",
-            text: "# of flight numbers",
-            headGroup: "Schedule",
+            field: 'overviewRatingDelta',
+            text: 'Rating &Delta;',
+            headGroup: 'Overview',
             visible: 0,
-            number: 1,
+            number: 0,
         },
         {
-            field: "scheduleFltNrDelta",
-            text: "# of flight numbers &Delta;",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "schedulePAXFreq",
-            text: "PAX frequency",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "schedulePAXFreqDelta",
-            text: "PAX frequency &Delta;",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "scheduleCargoFreq",
-            text: "Cargo frequency",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "scheduleCargoFreqDelta",
-            text: "Cargo frequency &Delta;",
-            headGroup: "Schedule",
-            visible: 0,
-            number: 1,
-        },
-        {
-            field: "scheduleTotalFreq",
-            text: "Total frequency",
-            headGroup: "Schedule",
+            field: 'overviewTotalPax',
+            text: 'Total pax',
+            headGroup: 'Overview',
             visible: 1,
             number: 1,
         },
         {
-            field: "scheduleTotalFreqDelta",
-            text: "Total frequency &Delta;",
-            headGroup: "Schedule",
+            field: 'overviewTotalPaxDelta',
+            text: 'Total pax &Delta;',
+            headGroup: 'Overview',
             visible: 1,
             number: 1,
         },
         {
-            field: "actionOpenAirline",
-            text: "Open airline page",
-            headGroup: "Actions",
+            field: 'overviewTotalCargo',
+            text: 'Total cargo',
+            headGroup: 'Overview',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'overviewTotalCargoDelta',
+            text: 'Total cargo &Delta;',
+            headGroup: 'Overview',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'overviewStations',
+            text: 'Stations',
+            headGroup: 'Overview',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'overviewStationsDelta',
+            text: 'Stations &Delta;',
+            headGroup: 'Overview',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'overviewFleet',
+            text: 'Fleet',
+            headGroup: 'Overview',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'overviewFleetDelta',
+            text: 'Fleet &Delta;',
+            headGroup: 'Overview',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'overviewStaff',
+            text: 'Staff',
+            headGroup: 'Overview',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'overviewStaffDelta',
+            text: 'Staff &Delta;',
+            headGroup: 'Overview',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'fafWeek',
+            text: 'Week',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 0,
+        },
+        {
+            field: 'fafWeekPre',
+            text: 'Previous week',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 0,
+        },
+        {
+            field: 'fafAirportsServed',
+            text: 'Airports served',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'fafAirportsServedDelta',
+            text: 'Airports served &Delta;',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'fafOperatedFlights',
+            text: 'Operated flights',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'fafOperatedFlightsDelta',
+            text: 'Operated flights &Delta;',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'fafSeatsOffered',
+            text: 'Seats offered',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'fafSeatsOfferedDelta',
+            text: 'Seats offered &Delta;',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'fafsko',
+            text: 'SKO',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'fafskoDelta',
+            text: 'SKO &Delta;',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'fafCargoOffered',
+            text: 'Cargo offered',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'fafCargoOfferedDelta',
+            text: 'Cargo offered &Delta;',
+            headGroup: 'Figures',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'faffko',
+            text: 'FKO',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'faffkoDela',
+            text: 'FKO &Delta;',
+            headGroup: 'Figures',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'scheduleDate',
+            text: 'Schedule Date',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 0,
+        },
+        {
+            field: 'scheduleDatePre',
+            text: 'Previous Schedule Date',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 0,
+        },
+        {
+            field: 'scheduleHubs',
+            text: 'Hubs (routes)',
+            headGroup: 'Schedule',
             visible: 1,
             number: 0,
         },
         {
-            field: "actionOpenSchedule",
-            text: "Show airline schedule",
-            headGroup: "Actions",
+            field: 'scheduleFltNr',
+            text: '# of flight numbers',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'scheduleFltNrDelta',
+            text: '# of flight numbers &Delta;',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'schedulePAXFreq',
+            text: 'PAX frequency',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'schedulePAXFreqDelta',
+            text: 'PAX frequency &Delta;',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'scheduleCargoFreq',
+            text: 'Cargo frequency',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'scheduleCargoFreqDelta',
+            text: 'Cargo frequency &Delta;',
+            headGroup: 'Schedule',
+            visible: 0,
+            number: 1,
+        },
+        {
+            field: 'scheduleTotalFreq',
+            text: 'Total frequency',
+            headGroup: 'Schedule',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'scheduleTotalFreqDelta',
+            text: 'Total frequency &Delta;',
+            headGroup: 'Schedule',
+            visible: 1,
+            number: 1,
+        },
+        {
+            field: 'actionOpenAirline',
+            text: 'Open airline page',
+            headGroup: 'Actions',
             visible: 1,
             number: 0,
         },
         {
-            field: "actionRemoveAirline",
-            text: "Remove airline",
-            headGroup: "Actions",
+            field: 'actionOpenSchedule',
+            text: 'Show airline schedule',
+            headGroup: 'Actions',
+            visible: 1,
+            number: 0,
+        },
+        {
+            field: 'actionRemoveAirline',
+            text: 'Remove airline',
+            headGroup: 'Actions',
             visible: 1,
             number: 0,
         },
@@ -2465,34 +2465,34 @@ function setDefaultCompetitorMonitoringSettings() {
 
 function getRatingNr(rating) {
     switch (rating) {
-        case "AAA":
+        case 'AAA':
             return 10;
             break;
-        case "AA":
+        case 'AA':
             return 9;
             break;
-        case "A":
+        case 'A':
             return 8;
             break;
-        case "BBB":
+        case 'BBB':
             return 7;
             break;
-        case "BB":
+        case 'BB':
             return 6;
             break;
-        case "B":
+        case 'B':
             return 5;
             break;
-        case "CCC":
+        case 'CCC':
             return 4;
             break;
-        case "CC":
+        case 'CC':
             return 3;
             break;
-        case "C":
+        case 'C':
             return 2;
             break;
-        case "D":
+        case 'D':
             return 1;
             break;
         default:
@@ -2514,109 +2514,109 @@ function displayAircraftProfitability() {
     //columns
     let columns = [
         {
-            category: "Aircraft",
-            title: "Aircraft ID",
-            data: "aircraftId",
+            category: 'Aircraft',
+            title: 'Aircraft ID',
+            data: 'aircraftId',
             sortable: 1,
             visible: 1,
             number: 1,
             id: 1,
         },
         {
-            category: "Aircraft",
-            title: "Registration",
-            data: "registration",
+            category: 'Aircraft',
+            title: 'Registration',
+            data: 'registration',
             sortable: 1,
             visible: 1,
         },
         {
-            category: "Aircraft",
-            title: "Equipment",
-            data: "equipment",
+            category: 'Aircraft',
+            title: 'Equipment',
+            data: 'equipment',
             sortable: 1,
             visible: 1,
         },
         {
-            category: "Aircraft",
-            title: "Fleet",
-            data: "fleet",
+            category: 'Aircraft',
+            title: 'Fleet',
+            data: 'fleet',
             sortable: 1,
             visible: 1,
         },
         {
-            category: "Aircraft",
-            title: "Nickname",
-            data: "nickname",
+            category: 'Aircraft',
+            title: 'Nickname',
+            data: 'nickname',
             sortable: 1,
             visible: 1,
         },
         {
-            category: "Aircraft",
-            title: "Note",
-            data: "note",
+            category: 'Aircraft',
+            title: 'Note',
+            data: 'note',
             sortable: 1,
             visible: 1,
         },
         {
-            category: "Aircraft",
-            title: "Age",
-            data: "age",
-            sortable: 1,
-            visible: 1,
-            number: 1,
-        },
-        {
-            category: "Aircraft",
-            title: "Maintenance",
-            data: "maintenance",
+            category: 'Aircraft',
+            title: 'Age',
+            data: 'age',
             sortable: 1,
             visible: 1,
             number: 1,
         },
         {
-            category: "Aircraft",
-            title: "Date",
-            data: "dateAircraft",
-            sortable: 1,
-            visible: 1,
-        },
-        {
-            category: "Profit",
-            title: "Total flights",
-            data: "totalFlights",
+            category: 'Aircraft',
+            title: 'Maintenance',
+            data: 'maintenance',
             sortable: 1,
             visible: 1,
             number: 1,
         },
         {
-            category: "Profit",
-            title: "Finished flights",
-            data: "finishedFlights",
+            category: 'Aircraft',
+            title: 'Date',
+            data: 'dateAircraft',
+            sortable: 1,
+            visible: 1,
+        },
+        {
+            category: 'Profit',
+            title: 'Total flights',
+            data: 'totalFlights',
             sortable: 1,
             visible: 1,
             number: 1,
         },
         {
-            category: "Profit",
-            title: "Profit/loss flights",
-            data: "profitFlights",
+            category: 'Profit',
+            title: 'Finished flights',
+            data: 'finishedFlights',
             sortable: 1,
             visible: 1,
             number: 1,
         },
         {
-            category: "Profit",
-            title: "Profit",
-            data: "profit",
+            category: 'Profit',
+            title: 'Profit/loss flights',
+            data: 'profitFlights',
             sortable: 1,
             visible: 1,
             number: 1,
-            format: "money",
         },
         {
-            category: "Profit",
-            title: "Profit extract date",
-            data: "dateProfit",
+            category: 'Profit',
+            title: 'Profit',
+            data: 'profit',
+            sortable: 1,
+            visible: 1,
+            number: 1,
+            format: 'money',
+        },
+        {
+            category: 'Profit',
+            title: 'Profit extract date',
+            data: 'dateProfit',
             sortable: 1,
             visible: 1,
         },
@@ -2633,7 +2633,7 @@ function displayAircraftProfitability() {
         });
     }
 
-    let key = server + airline.id + "aircraftFleet";
+    let key = server + airline.id + 'aircraftFleet';
     //Get storage fleet data
     chrome.storage.local.get(key, function (result) {
         //get aircraft flight data
@@ -2641,7 +2641,7 @@ function displayAircraftProfitability() {
         if (aircraftFleetData) {
             let keys = [];
             aircraftFleetData.fleet.forEach(function (value) {
-                keys.push(server + "aircraftFlights" + value.aircraftId);
+                keys.push(server + 'aircraftFlights' + value.aircraftId);
             });
             chrome.storage.local.get(keys, function (result) {
                 for (let aircraftFlightData in result) {
@@ -2670,45 +2670,45 @@ function displayAircraftProfitability() {
                     tableDiv = generateTable({
                         column: columns,
                         data: data,
-                        columnPrefix: "aes-aircraftProfit-",
+                        columnPrefix: 'aes-aircraftProfit-',
                         tableSettings: 1,
                         options: [
-                            "selectFirstSix",
-                            "openAircraft",
-                            "hideSelected",
-                            "applyFilter",
-                            "reloadTableAircraftProfit",
-                            "removeAircraft",
+                            'selectFirstSix',
+                            'openAircraft',
+                            'hideSelected',
+                            'applyFilter',
+                            'reloadTableAircraftProfit',
+                            'removeAircraft',
                         ],
                         filter: settings.aircraftProfitability.filter,
                         hideColumn: settings.aircraftProfitability.hideColumn,
-                        tableSettingStorage: "aircraftProfitability",
+                        tableSettingStorage: 'aircraftProfitability',
                     });
                 } else {
                     //Never happens or only when fleet = 0 because of updated script this output is copied bellow
                     tableDiv = $('<p class="warning"></p>').text(
-                        "No aircraft data in memory. Open fleet management to extract aircraft data."
+                        'No aircraft data in memory. Open fleet management to extract aircraft data.'
                     );
                 }
                 //Div
                 let div = $('<div class="as-panel"></div>').append(tableDiv);
-                let mainDiv = $("#aes-div-dashboard");
+                let mainDiv = $('#aes-div-dashboard');
                 //Build layout
                 mainDiv.empty();
-                let title = $("<h3></h3>").text("Aircraft Profitability");
+                let title = $('<h3></h3>').text('Aircraft Profitability');
                 mainDiv.append(title, div);
             });
         } else {
             //No data
             //Div
             let tableDiv = $('<p class="warning"></p>').text(
-                "No aircraft data in memory. Open fleet management to extract aircraft data."
+                'No aircraft data in memory. Open fleet management to extract aircraft data.'
             );
             let div = $('<div class="as-panel"></div>').append(tableDiv);
-            let mainDiv = $("#aes-div-dashboard");
+            let mainDiv = $('#aes-div-dashboard');
             //Build layout
             mainDiv.empty();
-            let title = $("<h3></h3>").text("Aircraft Profitability");
+            let title = $('<h3></h3>').text('Aircraft Profitability');
             mainDiv.append(title, div);
         }
     });
@@ -2724,7 +2724,7 @@ function displayAircraftProfitability() {
                 profit.profit = value.profit.profit;
                 profit.dateProfit =
                     AES.formatDateString(value.profit.date) +
-                    " " +
+                    ' ' +
                     value.profit.time;
             }
             data.push({
@@ -2737,7 +2737,7 @@ function displayAircraftProfitability() {
                 age: value.age,
                 maintenance: value.maintenance,
                 dateAircraft:
-                    AES.formatDateString(value.date) + " " + value.time,
+                    AES.formatDateString(value.date) + ' ' + value.time,
                 totalFlights: profit.totalFlights,
                 finishedFlights: profit.finishedFlights,
                 profitFlights: profit.profitFlights,
@@ -2777,7 +2777,7 @@ function generateTable(tableOptionsRule) {
                 tableCategory[category] +
                 '">' +
                 category +
-                "</th>"
+                '</th>'
         );
     }
 
@@ -2787,7 +2787,7 @@ function generateTable(tableOptionsRule) {
         if (value.visible) {
             if (value.sortable) {
                 //Sort
-                let sort = $("<a></a>").text(value.title);
+                let sort = $('<a></a>').text(value.title);
                 sort.click(function () {
                     masterSortTable(
                         value.data,
@@ -2800,14 +2800,14 @@ function generateTable(tableOptionsRule) {
                     $('<th style="cursor: pointer;"></th>').html(sort)
                 );
             } else {
-                table.cell.header.push("<th>" + value.title + "</th>");
+                table.cell.header.push('<th>' + value.title + '</th>');
             }
         }
     });
     //Head
     table.row.head = [];
-    table.row.head.push($("<tr></tr>").append(table.cell.category));
-    table.row.head.push($("<tr></tr>").append(table.cell.header));
+    table.row.head.push($('<tr></tr>').append(table.cell.category));
+    table.row.head.push($('<tr></tr>').append(table.cell.header));
     //Table Body
     table.row.body = [];
     tableOptionsRule.data.forEach(function (dataValue) {
@@ -2822,7 +2822,7 @@ function generateTable(tableOptionsRule) {
                 id = dataValue[colValue.data];
             }
             if (colValue.visible) {
-                let td = $("<td></td>").addClass(
+                let td = $('<td></td>').addClass(
                     tableOptionsRule.columnPrefix + colValue.data
                 );
                 if (colValue.format) {
@@ -2838,17 +2838,17 @@ function generateTable(tableOptionsRule) {
                 cell.push(td);
             }
         });
-        table.row.body.push($("<tr></tr>").attr("id", id).append(cell));
+        table.row.body.push($('<tr></tr>').attr('id', id).append(cell));
     });
-    let thead = $("<thead></thead>").append(table.row.head);
-    let tbody = $("<tbody></tbody>").append(table.row.body);
+    let thead = $('<thead></thead>').append(table.row.head);
+    let tbody = $('<tbody></tbody>').append(table.row.body);
     table.tableHtml.append(thead, tbody);
     let tableWell = $(
         '<div style="overflow-x:auto;" class="as-table-well"></div>'
     ).append(table.tableHtml);
 
     //Table Settings
-    let settingsDiv = "";
+    let settingsDiv = '';
     if (tableOptionsRule.tableSettings) {
         let divCol = [];
         //Options
@@ -2871,19 +2871,19 @@ function generateTable(tableOptionsRule) {
         settingsDiv = $('<div class="row"></div>').append(divCol);
     }
 
-    let div = $("<div></div>").append(settingsDiv, tableWell);
+    let div = $('<div></div>').append(settingsDiv, tableWell);
     return div;
     //Table functions
     function masterSortTable(column, number, table, columnPrefix) {
-        let tableRows = $("tbody tr", table);
-        let tableBody = $("tbody", table);
+        let tableRows = $('tbody tr', table);
+        let tableBody = $('tbody', table);
         tableBody.empty();
         let indexes = [];
         tableRows.each(function () {
             if (number) {
                 let value = parseInt(
                     $(this)
-                        .find("." + columnPrefix + column)
+                        .find('.' + columnPrefix + column)
                         .text(),
                     10
                 );
@@ -2895,7 +2895,7 @@ function generateTable(tableOptionsRule) {
             } else {
                 indexes.push(
                     $(this)
-                        .find("." + columnPrefix + column)
+                        .find('.' + columnPrefix + column)
                         .text()
                 );
             }
@@ -2933,7 +2933,7 @@ function generateTable(tableOptionsRule) {
                 if (number) {
                     let value = parseInt(
                         $(tableRows[j])
-                            .find("." + columnPrefix + column)
+                            .find('.' + columnPrefix + column)
                             .text(),
                         10
                     );
@@ -2947,7 +2947,7 @@ function generateTable(tableOptionsRule) {
                 } else {
                     if (
                         $(tableRows[j])
-                            .find("." + columnPrefix + column)
+                            .find('.' + columnPrefix + column)
                             .text() == sorted[i]
                     ) {
                         tableBody.append($(tableRows[j]));
@@ -2960,20 +2960,20 @@ function generateTable(tableOptionsRule) {
 
     function masterCellFormat(type, value) {
         if (!value) {
-            return "";
+            return '';
         }
         switch (type) {
-            case "money":
-                let span = $("<span></span>");
-                let text = "";
+            case 'money':
+                let span = $('<span></span>');
+                let text = '';
                 if (value > 0) {
-                    span.addClass("good");
-                    text = "+";
+                    span.addClass('good');
+                    text = '+';
                 }
                 if (value < 0) {
-                    span.addClass("bad");
+                    span.addClass('bad');
                 }
-                text = text + new Intl.NumberFormat().format(value) + " AS$";
+                text = text + new Intl.NumberFormat().format(value) + ' AS$';
                 span.text(text);
                 return span;
                 break;
@@ -2983,42 +2983,42 @@ function generateTable(tableOptionsRule) {
     }
 
     function masterTableOptions(table, options) {
-        let div = $("<div></div>");
+        let div = $('<div></div>');
         options.forEach(function (value, index) {
             if (index) {
-                let span = $("<span> </span>");
+                let span = $('<span> </span>');
                 div.append(span);
             }
             div.append(masterTableOptionsHandle(value));
         });
         //Closable legend
-        let link = $('<a style="cursor: pointer;"></a>').text("Options");
-        let legend = $("<legend></legend>").html(link);
+        let link = $('<a style="cursor: pointer;"></a>').text('Options');
+        let legend = $('<legend></legend>').html(link);
         link.click(function () {
             div.toggle();
         });
-        let fieldset = $("<fieldset></fieldset>").append(legend, div);
+        let fieldset = $('<fieldset></fieldset>').append(legend, div);
         return fieldset;
 
         //Functions
         function masterTableOptionsHandle(value) {
             switch (value) {
-                case "selectFirstSix":
+                case 'selectFirstSix':
                     return masterTableOptionsSelectFirstSix();
                     break;
-                case "openAircraft":
+                case 'openAircraft':
                     return masterTableOptionsOpenAircraft();
                     break;
-                case "reloadTableAircraftProfit":
+                case 'reloadTableAircraftProfit':
                     return masterTableOptionsReloadTableAP();
                     break;
-                case "removeAircraft":
+                case 'removeAircraft':
                     return masterTableOptionsRemoveAircraft();
                     break;
-                case "applyFilter":
+                case 'applyFilter':
                     return masterTableOptionsApplyFilter();
                     break;
-                case "hideSelected":
+                case 'hideSelected':
                     return masterTableOptionsHideSelected();
                     break;
                 default:
@@ -3031,10 +3031,10 @@ function generateTable(tableOptionsRule) {
                 );
                 btn.click(function () {
                     let count = 0;
-                    $("tbody tr", table).each(function () {
+                    $('tbody tr', table).each(function () {
                         $(this)
                             .find('input[type="checkbox"]')
-                            .prop("checked", true);
+                            .prop('checked', true);
                         count++;
                         if (count >= 6) {
                             return false; // break out of .each loop
@@ -3049,22 +3049,22 @@ function generateTable(tableOptionsRule) {
                     '<button type="button" class="btn btn-default">Open aircraft (GO CRAZY)</button>'
                 );
                 btn.click(function () {
-                    let urls = $("tbody tr", table)
-                        .has("input:checked")
+                    let urls = $('tbody tr', table)
+                        .has('input:checked')
                         .map(function () {
-                            let id = $(this).attr("id");
+                            let id = $(this).attr('id');
                             let url =
-                                "https://" +
+                                'https://' +
                                 server +
-                                ".airlinesim.aero/app/fleets/aircraft/" +
+                                '.airlinesim.aero/app/fleets/aircraft/' +
                                 id +
-                                "/1";
+                                '/1';
                             return url;
                         })
                         .toArray();
                     //Open new tabs
                     for (let i = 0; i < urls.length; i++) {
-                        window.open(urls[i], "_blank");
+                        window.open(urls[i], '_blank');
                         // if (i == 5) {
                         //     break;
                         // }
@@ -3090,18 +3090,18 @@ function generateTable(tableOptionsRule) {
                 btn.click(function () {
                     let id = [];
                     let aircraftKey = [];
-                    $("tbody tr", table)
-                        .has("input:checked")
+                    $('tbody tr', table)
+                        .has('input:checked')
                         .each(function () {
-                            let localId = $(this).attr("id");
+                            let localId = $(this).attr('id');
                             id.push(localId);
                             aircraftKey.push(
-                                server + "aircraftFlights" + localId
+                                server + 'aircraftFlights' + localId
                             );
                             $(this).remove();
                         });
                     if (id.length) {
-                        let fleetKey = server + airline.id + "aircraftFleet";
+                        let fleetKey = server + airline.id + 'aircraftFleet';
                         chrome.storage.local.get(fleetKey, function (result) {
                             let storedFleetData = result[fleetKey];
                             let newFleet = storedFleetData.fleet.filter(
@@ -3140,14 +3140,14 @@ function generateTable(tableOptionsRule) {
                 btn.click(function () {
                     let filter = [];
                     table
-                        .closest(".as-panel")
-                        .find("fieldset:eq(1) table tbody tr")
+                        .closest('.as-panel')
+                        .find('fieldset:eq(1) table tbody tr')
                         .each(function () {
                             filter.push({
-                                titlecode: $(this).find("input").val(),
-                                title: $(this).find("td:eq(0)").text(),
-                                operation: $(this).find("td:eq(1)").text(),
-                                value: $(this).find("td:eq(2)").text(),
+                                titlecode: $(this).find('input').val(),
+                                title: $(this).find('td:eq(0)').text(),
+                                operation: $(this).find('td:eq(1)').text(),
+                                value: $(this).find('td:eq(2)').text(),
                             });
                         });
                     settings[tableOptionsRule.tableSettingStorage].filter =
@@ -3155,12 +3155,12 @@ function generateTable(tableOptionsRule) {
                     chrome.storage.local.set(
                         { settings: settings },
                         function () {
-                            $("tbody tr", table).each(function () {
+                            $('tbody tr', table).each(function () {
                                 let row = this;
                                 filter.forEach(function (filter) {
                                     let cell = $(row)
                                         .find(
-                                            "." +
+                                            '.' +
                                                 tableOptionsRule.columnPrefix +
                                                 filter.titlecode
                                         )
@@ -3189,22 +3189,22 @@ function generateTable(tableOptionsRule) {
                                         }
                                     }
                                     switch (filter.operation) {
-                                        case "=":
+                                        case '=':
                                             if (cell != value) {
                                                 $(row).remove();
                                             }
                                             break;
-                                        case "!=":
+                                        case '!=':
                                             if (cell == value) {
                                                 $(row).remove();
                                             }
                                             break;
-                                        case ">":
+                                        case '>':
                                             if (cell < value) {
                                                 $(row).remove();
                                             }
                                             break;
-                                        case "<":
+                                        case '<':
                                             if (cell > value) {
                                                 $(row).remove();
                                             }
@@ -3222,7 +3222,7 @@ function generateTable(tableOptionsRule) {
                     '<button type="button" class="btn btn-default">Hide selected</button>'
                 );
                 btn.click(function () {
-                    $("tbody tr", table).has("input:checked").remove();
+                    $('tbody tr', table).has('input:checked').remove();
                 });
                 return btn;
             }
@@ -3232,17 +3232,17 @@ function generateTable(tableOptionsRule) {
     function masterTableFilter(filter, column) {
         //Table head
         let th = [];
-        th.push("<th>Column</th>");
-        th.push("<th>Operation</th>");
-        th.push("<th>Value</th>");
-        th.push("<th></th>");
-        let thead = $("<thead></thead>").append($("<tr></tr>").append(th));
+        th.push('<th>Column</th>');
+        th.push('<th>Operation</th>');
+        th.push('<th>Value</th>');
+        th.push('<th></th>');
+        let thead = $('<thead></thead>').append($('<tr></tr>').append(th));
         //Table body
         let row = [];
         if (filter) {
             filter.forEach(function (fil) {
                 row.push(
-                    $("<tr></tr>").append(
+                    $('<tr></tr>').append(
                         masterTableFilterAddBodyRow(
                             fil.titlecode,
                             fil.title,
@@ -3254,13 +3254,13 @@ function generateTable(tableOptionsRule) {
             });
         }
 
-        let tbody = $("<tbody></tbody>").append(row);
+        let tbody = $('<tbody></tbody>').append(row);
         //Table foot
         //select column
         let option1 = [];
         column.forEach(function (col) {
             option1.push(
-                '<option value="' + col.data + '">' + col.title + "</option>"
+                '<option value="' + col.data + '">' + col.title + '</option>'
             );
         });
         let select1 = $('<select class="form-control"></select>').append(
@@ -3268,10 +3268,10 @@ function generateTable(tableOptionsRule) {
         );
         //Select value
         let option = [];
-        option.push("<option>=</option>");
-        option.push("<option>!=</option>");
-        option.push("<option>></option>");
-        option.push("<option><</option>");
+        option.push('<option>=</option>');
+        option.push('<option>!=</option>');
+        option.push('<option>></option>');
+        option.push('<option><</option>');
         let select = $('<select class="form-control"></select>').append(option);
         //Value
         let input = $(
@@ -3279,15 +3279,15 @@ function generateTable(tableOptionsRule) {
         );
         //Add button
         let btn = $('<button class="btn btn-default"></button>').text(
-            "Add Row"
+            'Add Row'
         );
         btn.click(function () {
-            let column = $("option:selected", select1).text();
-            let columnVal = $("option:selected", select1).val();
-            let operation = $("option:selected", select).text();
+            let column = $('option:selected', select1).text();
+            let columnVal = $('option:selected', select1).val();
+            let operation = $('option:selected', select).text();
             let value = input.val();
             tbody.append(
-                $("<tr></tr>").append(
+                $('<tr></tr>').append(
                     masterTableFilterAddBodyRow(
                         columnVal,
                         column,
@@ -3299,11 +3299,11 @@ function generateTable(tableOptionsRule) {
         });
         //Footer rows
         let tf = [];
-        tf.push($("<td></td>").html(select1));
-        tf.push($("<td></td>").html(select));
-        tf.push($("<td></td>").html(input));
-        tf.push($("<td></td>").append(btn));
-        let tfoot = $("<tfoot></tfoot>").append($("<tr></tr>").append(tf));
+        tf.push($('<td></td>').html(select1));
+        tf.push($('<td></td>').html(select));
+        tf.push($('<td></td>').html(input));
+        tf.push($('<td></td>').append(btn));
+        let tfoot = $('<tfoot></tfoot>').append($('<tr></tr>').append(tf));
         let tableFilter = $(
             '<table class="table table-bordered table-striped table-hover"></table>'
         ).append(thead, tbody, tfoot);
@@ -3311,12 +3311,12 @@ function generateTable(tableOptionsRule) {
             tableFilter
         );
         //Closable legend
-        let link = $('<a style="cursor: pointer;"></a>').text("Filter");
-        let legend = $("<legend></legend>").html(link);
+        let link = $('<a style="cursor: pointer;"></a>').text('Filter');
+        let legend = $('<legend></legend>').html(link);
         link.click(function () {
             divTable.toggle();
         });
-        let fieldset = $("<fieldset></fieldset>").append(legend, divTable);
+        let fieldset = $('<fieldset></fieldset>').append(legend, divTable);
         return fieldset;
         //Functions
         function masterTableFilterAddBodyRow(
@@ -3331,17 +3331,17 @@ function generateTable(tableOptionsRule) {
                     titleCode +
                     '">' +
                     title +
-                    "</td>"
+                    '</td>'
             );
-            td.push("<td>" + operation + "</td>");
-            td.push("<td>" + value + "</td>");
-            let deleteBtn = $("<a></a>").html(
+            td.push('<td>' + operation + '</td>');
+            td.push('<td>' + value + '</td>');
+            let deleteBtn = $('<a></a>').html(
                 '<span class="fa fa-trash" title="Delete row"></span>'
             );
             deleteBtn.click(function () {
-                $(this).closest("tr").remove();
+                $(this).closest('tr').remove();
             });
-            td.push($("<td></td>").append(deleteBtn));
+            td.push($('<td></td>').append(deleteBtn));
             return td;
         }
     }
@@ -3349,9 +3349,9 @@ function generateTable(tableOptionsRule) {
     function masterTableColumns() {
         //Table head
         let th = [];
-        th.push("<th>Show</th>");
-        th.push("<th>Column</th>");
-        let thead = $("<thead></thead>").append($("<tr></tr>").append(th));
+        th.push('<th>Show</th>');
+        th.push('<th>Column</th>');
+        let thead = $('<thead></thead>').append($('<tr></tr>').append(th));
         //Table body
         let row = [];
         tableOptionsRule.column.forEach(function (col) {
@@ -3381,13 +3381,13 @@ function generateTable(tableOptionsRule) {
                 );
             });
             if (col.visible) {
-                input.prop("checked", true);
+                input.prop('checked', true);
             }
-            td.push($("<td></td>").append(input));
-            td.push($("<td></td>").text(col.title));
-            row.push($("<tr></tr>").append(td));
+            td.push($('<td></td>').append(input));
+            td.push($('<td></td>').text(col.title));
+            row.push($('<tr></tr>').append(td));
         });
-        let tbody = $("<tbody></tbody>").append(row);
+        let tbody = $('<tbody></tbody>').append(row);
         let tableColumns = $(
             '<table class="table table-bordered table-striped table-hover"></table>'
         ).append(thead, tbody);
@@ -3395,40 +3395,40 @@ function generateTable(tableOptionsRule) {
             .append(tableColumns)
             .hide();
         //Closable legend
-        let link = $('<a style="cursor: pointer;"></a>').text("Columns");
-        let legend = $("<legend></legend>").html(link);
+        let link = $('<a style="cursor: pointer;"></a>').text('Columns');
+        let legend = $('<legend></legend>').html(link);
         link.click(function () {
             divTable.toggle();
         });
-        let fieldset = $("<fieldset></fieldset>").append(legend, divTable);
+        let fieldset = $('<fieldset></fieldset>').append(legend, divTable);
         return fieldset;
     }
 }
 //Display general helper functions
 function generalAddScheduleRow(tbody) {
-    let td1 = $("<td></td>").text("Schedule");
-    let td2 = $("<td></td>");
-    let td3 = $("<td></td>");
-    let row = $("<tr></tr>").append(td1, td2, td3);
+    let td1 = $('<td></td>').text('Schedule');
+    let td2 = $('<td></td>');
+    let td3 = $('<td></td>');
+    let row = $('<tr></tr>').append(td1, td2, td3);
     tbody.append(row);
     //Get schedule
-    let scheduleKey = server + airline.id + "schedule";
+    let scheduleKey = server + airline.id + 'schedule';
     chrome.storage.local.get([scheduleKey], function (result) {
         let scheduleData = result[scheduleKey];
         if (scheduleData) {
-            let lastUpdate = getDate("schedule", scheduleData.date);
+            let lastUpdate = getDate('schedule', scheduleData.date);
             let diff = AES.getDateDiff([todayDate.date, lastUpdate]);
-            let span = $("<span></span>").text(
-                "Last schedule extract " +
+            let span = $('<span></span>').text(
+                'Last schedule extract ' +
                     AES.formatDateString(lastUpdate) +
-                    " (" +
+                    ' (' +
                     diff +
-                    " days ago). Extract new schedule if there are new routes."
+                    ' days ago). Extract new schedule if there are new routes.'
             );
             if (diff >= 0 && diff < 7) {
-                span.addClass("good");
+                span.addClass('good');
             } else {
-                span.addClass("warning");
+                span.addClass('warning');
             }
             td2.append(span);
             generalUpdateScheduleAction(td3);
@@ -3449,7 +3449,7 @@ function generalUpdateScheduleAction(td3) {
     btn.click(function () {
         settings.schedule.autoExtract = 1;
         //get schedule link
-        let link = $("#enterprise-dashboard table:eq(0) tfoot td a:eq(2)");
+        let link = $('#enterprise-dashboard table:eq(0) tfoot td a:eq(2)');
         chrome.storage.local.set({ settings: settings }, function () {
             link[0].click();
         });
@@ -3459,29 +3459,29 @@ function generalUpdateScheduleAction(td3) {
 
 function generalAddPersonnelManagementRow(tbody) {
     let td = [];
-    td.push($("<td></td>").text("Personnel Management"));
-    td.push($("<td></td>"));
-    td.push($("<td></td>"));
-    let row = $("<tr></tr>").append(td);
+    td.push($('<td></td>').text('Personnel Management'));
+    td.push($('<td></td>'));
+    td.push($('<td></td>'));
+    let row = $('<tr></tr>').append(td);
     tbody.append(row);
     //Get Status
-    let key = server + airline.id + "personnelManagement";
+    let key = server + airline.id + 'personnelManagement';
     chrome.storage.local.get([key], function (result) {
         let personnelManagementData = result[key];
         if (personnelManagementData) {
             let lastUpdate = personnelManagementData.date;
             let diff = AES.getDateDiff([todayDate.date, lastUpdate]);
-            let span = $("<span></span>").text(
-                "Last personnel salary update: " +
+            let span = $('<span></span>').text(
+                'Last personnel salary update: ' +
                     AES.formatDateString(lastUpdate) +
-                    " (" +
+                    ' (' +
                     diff +
-                    " days ago)."
+                    ' days ago).'
             );
             if (diff >= 0 && diff < 7) {
-                span.addClass("good");
+                span.addClass('good');
             } else {
-                span.addClass("warning");
+                span.addClass('warning');
             }
             td[1].append(span);
         } else {
@@ -3499,7 +3499,7 @@ function generalAddPersonnelManagementRow(tbody) {
     btn.click(function () {
         //get schedule link
         let link = $(
-            "#as-navbar-main-collapse > ul > li:eq(4) > ul > li:eq(5) > a"
+            '#as-navbar-main-collapse > ul > li:eq(4) > ul > li:eq(5) > a'
         );
         link[0].click();
     });
@@ -3507,21 +3507,21 @@ function generalAddPersonnelManagementRow(tbody) {
 }
 //Display  default
 function displayDefault() {
-    let mainDiv = $("#aes-div-dashboard");
+    let mainDiv = $('#aes-div-dashboard');
     mainDiv.empty();
 }
 
 //Table sort and other functions
 function SortTable(column, number, tableId, columnPrefix) {
-    let tableRows = $("#" + tableId + " tbody tr");
-    let tableBody = $("#" + tableId + " tbody");
+    let tableRows = $('#' + tableId + ' tbody tr');
+    let tableBody = $('#' + tableId + ' tbody');
     tableBody.empty();
     let indexes = [];
     tableRows.each(function () {
         if (number) {
             let value = parseInt(
                 $(this)
-                    .find("." + columnPrefix + column)
+                    .find('.' + columnPrefix + column)
                     .text(),
                 10
             );
@@ -3533,7 +3533,7 @@ function SortTable(column, number, tableId, columnPrefix) {
         } else {
             indexes.push(
                 $(this)
-                    .find("." + columnPrefix + column)
+                    .find('.' + columnPrefix + column)
                     .text()
             );
         }
@@ -3571,7 +3571,7 @@ function SortTable(column, number, tableId, columnPrefix) {
             if (number) {
                 let value = parseInt(
                     $(tableRows[j])
-                        .find("." + columnPrefix + column)
+                        .find('.' + columnPrefix + column)
                         .text(),
                     10
                 );
@@ -3585,7 +3585,7 @@ function SortTable(column, number, tableId, columnPrefix) {
             } else {
                 if (
                     $(tableRows[j])
-                        .find("." + columnPrefix + column)
+                        .find('.' + columnPrefix + column)
                         .text() == sorted[i]
                 ) {
                     tableBody.append($(tableRows[j]));
@@ -3599,7 +3599,7 @@ function SortTable(column, number, tableId, columnPrefix) {
 //Helper
 function getDate(type, scheduleData) {
     switch (type) {
-        case "schedule":
+        case 'schedule':
             //scheduleData must be schedule object with dates as properties
             let dates = [];
             for (let date in scheduleData) {

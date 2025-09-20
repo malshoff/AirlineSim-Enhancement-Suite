@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-"use strict";
+'use strict';
 //Functions
 function setDefaultSettings() {
     //Add default settings
@@ -12,7 +12,7 @@ function setDefaultSettings() {
         general: setDefaultGeneralSettings(),
         schedule: setDefaultScheduleSettings(),
     };
-    chrome.storage.local.get(["settings"], function (result) {
+    chrome.storage.local.get(['settings'], function (result) {
         let settings = result.settings;
         if (!settings) {
             settings = aesSettings;
@@ -34,7 +34,7 @@ function setDefaultScheduleSettings() {
 function setDefaultGeneralSettings() {
     //auto settings
     let general = {
-        defaultDashboard: "general",
+        defaultDashboard: 'general',
     };
     //Cmp settings
     return general;
@@ -50,7 +50,7 @@ function setDefaultInvPricingSettings() {
         historyTable: {
             showNow: 1,
             showOnlyPricing: 0,
-            numberOfDates: "5",
+            numberOfDates: '5',
         },
     };
     //Cmp settings
@@ -58,47 +58,47 @@ function setDefaultInvPricingSettings() {
         {
             min: 0,
             max: 40,
-            name: "Drop High",
+            name: 'Drop High',
             step: -8,
         },
         {
             min: 40,
             max: 60,
-            name: "Drop Medium",
+            name: 'Drop Medium',
             step: -4,
         },
         {
             min: 60,
             max: 70,
-            name: "Drop Low",
+            name: 'Drop Low',
             step: -2,
         },
         {
             min: 70,
             max: 80,
-            name: "Keep",
+            name: 'Keep',
             step: 0,
         },
         {
             min: 80,
             max: 90,
-            name: "Raise Low",
+            name: 'Raise Low',
             step: 1,
         },
         {
             min: 90,
             max: 99,
-            name: "Raise Medium",
+            name: 'Raise Medium',
             step: 2,
         },
         {
             min: 99,
             max: 100,
-            name: "Raise High",
+            name: 'Raise High',
             step: 5,
         },
     ];
-    let cmps = ["Y", "C", "F", "Cargo"];
+    let cmps = ['Y', 'C', 'F', 'Cargo'];
     cmps.forEach(function (cmp) {
         invPricing.recommendation[cmp] = {
             maxPrice: 200,
@@ -117,7 +117,7 @@ chrome.runtime.onInstalled.addListener(function () {
             {
                 conditions: [
                     new chrome.declarativeContent.PageStateMatcher({
-                        pageUrl: { hostContains: ".airlinesim.aero" },
+                        pageUrl: { hostContains: '.airlinesim.aero' },
                     }),
                 ],
                 actions: [new chrome.declarativeContent.ShowPageAction()],
@@ -128,13 +128,13 @@ chrome.runtime.onInstalled.addListener(function () {
 
 // Handle messages from content scripts
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === "closeTab") {
+    if (request.action === 'closeTab') {
         // Close the tab that sent the message
         if (sender.tab && sender.tab.id) {
             chrome.tabs.remove(sender.tab.id);
             sendResponse({ success: true });
         } else {
-            sendResponse({ success: false, error: "No tab ID available" });
+            sendResponse({ success: false, error: 'No tab ID available' });
         }
     }
     return true; // Keep the message channel open for async response

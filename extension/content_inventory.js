@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 //MAIN
 //Global vars
 var settings, pricingData, todayDate, analysis, server, airline;
@@ -8,7 +8,7 @@ $(function () {
     airline = AES.getAirline();
 });
 
-window.addEventListener("load", async (event) => {
+window.addEventListener('load', async (event) => {
     settings = await getSettings();
     aesmodule = new Validation();
 
@@ -24,7 +24,7 @@ window.addEventListener("load", async (event) => {
  * @returns {object} data.settings
  */
 async function getSettings() {
-    const data = await chrome.storage.local.get(["settings"]);
+    const data = await chrome.storage.local.get(['settings']);
     return data.settings;
 }
 
@@ -59,7 +59,7 @@ async function displayInventory() {
 
     //Automation
     //Check if valid analysis exists
-    if (analysis.hasValue("valid")) {
+    if (analysis.hasValue('valid')) {
         //CHeck if updated todayDate
         if (pricingData.date[todayDate]) {
             //Today update exists
@@ -70,27 +70,27 @@ async function displayInventory() {
             } else {
                 //Pricing not updated today
                 //Check if new price available
-                if (analysis.hasValue("newPrice")) {
+                if (analysis.hasValue('newPrice')) {
                     //Update price
                     if (settings.invPricing.autoPriceUpdate) {
-                        $("#aes-btn-invPricing-apply-new-prices").click();
+                        $('#aes-btn-invPricing-apply-new-prices').click();
                     }
                 }
             }
         } else {
             //Today update does not exists
             //Check if new price available
-            if (analysis.hasValue("newPrice")) {
+            if (analysis.hasValue('newPrice')) {
                 //Update price
                 if (settings.invPricing.autoPriceUpdate) {
-                    $("#aes-btn-invPricing-apply-new-prices").click();
+                    $('#aes-btn-invPricing-apply-new-prices').click();
                 } else if (settings.invPricing.autoAnalysisSave) {
-                    $("#aes-btn-invPricing-save-snapshot").click();
+                    $('#aes-btn-invPricing-save-snapshot').click();
                 }
             } else {
                 //Update data
                 if (settings.invPricing.autoAnalysisSave) {
-                    $("#aes-btn-invPricing-save-snapshot").click();
+                    $('#aes-btn-invPricing-save-snapshot').click();
                 }
             }
         }
@@ -104,7 +104,7 @@ async function displayInventory() {
 function getFlights() {
     const flights = [];
     // TODO: also support grouped mode (#inventory-grouped-table)
-    const flightRows = document.querySelectorAll("#inventory-table tbody tr");
+    const flightRows = document.querySelectorAll('#inventory-table tbody tr');
 
     if (!flightRows) {
         throw new Error('"Group by flight" needs to be unchecked');
@@ -124,14 +124,14 @@ function getFlights() {
  * @returns {object} flight - object with the parsed flight information
  */
 function getFlight(row) {
-    const cells = row.querySelectorAll("td");
-    const flightNumber = cells[1].querySelector("a[href*=numbers").innerText;
+    const cells = row.querySelectorAll('td');
+    const flightNumber = cells[1].querySelector('a[href*=numbers').innerText;
     const date = cells[2].innerText;
     const compCode = getCompCode(cells[5].innerText);
     const capacity = cells[6].innerText;
     const booked = cells[7].innerText;
     const price = cells[9].innerText;
-    const status = cells[10].innerText.replace(/\s+/g, "");
+    const status = cells[10].innerText.replace(/\s+/g, '');
 
     const flight = {
         fltNr: flightNumber,
@@ -153,11 +153,11 @@ function getFlight(row) {
  */
 function getCompCode(text) {
     if (!text) {
-        throw new Error("no value provided for getCompCode");
+        throw new Error('no value provided for getCompCode');
     }
 
     if (text.length > 1) {
-        return "Cargo";
+        return 'Cargo';
     }
 
     return text;
@@ -168,11 +168,11 @@ function getCompCode(text) {
  * @returns {object} prices
  */
 function getPriceDetails() {
-    const pricingRows = document.querySelectorAll(".pricing table tbody tr");
+    const pricingRows = document.querySelectorAll('.pricing table tbody tr');
     const prices = {};
 
     for (const row of pricingRows) {
-        const cells = row.querySelectorAll("td");
+        const cells = row.querySelectorAll('td');
         const cmp = getCompCode(cells[0].innerText);
         const price = getPrice(cells);
 
@@ -190,10 +190,10 @@ function getPriceDetails() {
 function getPrice(cells) {
     const currentPrice = AES.cleanInteger(cells[1].innerText);
     const defaultPrice = AES.cleanInteger(
-        cells[4].innerText.replace(/\s+/g, "")
+        cells[4].innerText.replace(/\s+/g, '')
     );
     const currentPricePoint = getCurrentPricePoint(currentPrice, defaultPrice);
-    const newPriceInput = cells[2].querySelector("input");
+    const newPriceInput = cells[2].querySelector('input');
 
     const price = {
         currentPrice: currentPrice,
@@ -237,124 +237,124 @@ function getAnalysis(flights, prices, storedData) {
         note: function (cmp) {
             if (this.data[cmp].valid) {
                 if (this.data[cmp].useCurrentPrice) {
-                    return "Current price analysis";
+                    return 'Current price analysis';
                 } else {
-                    return "No current price flights, using old price";
+                    return 'No current price flights, using old price';
                 }
             } else {
-                return "No data for analysis";
+                return 'No data for analysis';
             }
         },
         displayLoad: function (cmp) {
             if (this.data[cmp].valid) {
                 return (
                     this.data[cmp].totalBkd +
-                    " / " +
+                    ' / ' +
                     this.data[cmp].totalCap +
-                    " (" +
-                    displayPerc(Math.round(this.getLoad(cmp) * 100), "load") +
-                    ")"
+                    ' (' +
+                    displayPerc(Math.round(this.getLoad(cmp) * 100), 'load') +
+                    ')'
                 );
             } else {
-                return "-";
+                return '-';
             }
         },
         displayRec: function (cmp) {
             if (this.data[cmp].recommendation) {
                 switch (this.data[cmp].recType) {
-                    case "good":
+                    case 'good':
                         return (
                             '<span class="good">' +
                             this.data[cmp].recommendation +
-                            "</span>"
+                            '</span>'
                         );
-                    case "bad":
+                    case 'bad':
                         return (
                             '<span class="bad">' +
                             this.data[cmp].recommendation +
-                            "</span>"
+                            '</span>'
                         );
-                    case "neutral":
+                    case 'neutral':
                         return (
                             '<span class="warning">' +
                             this.data[cmp].recommendation +
-                            "</span>"
+                            '</span>'
                         );
                     default:
                         return (
                             '<span class="warning">ERROR:2501 Wrong recType set:' +
                             this.data[cmp].recType +
-                            "</span>"
+                            '</span>'
                         );
                 }
             } else {
-                return "-";
+                return '-';
             }
         },
         displayPrice: function (cmp, type) {
             switch (type) {
-                case "current":
+                case 'current':
                     return (
                         formatCurrency(this.data[cmp].currentPrice) +
-                        " AS$ (" +
-                        displayPerc(this.data[cmp].currentPricePoint, "price") +
-                        ")"
+                        ' AS$ (' +
+                        displayPerc(this.data[cmp].currentPricePoint, 'price') +
+                        ')'
                     );
-                case "new":
+                case 'new':
                     if (this.data[cmp].newPrice) {
                         return (
                             formatCurrency(this.data[cmp].newPrice) +
-                            " AS$ (" +
-                            displayPerc(this.data[cmp].newPricePoint, "price") +
-                            ")"
+                            ' AS$ (' +
+                            displayPerc(this.data[cmp].newPricePoint, 'price') +
+                            ')'
                         );
                     } else {
-                        return "-";
+                        return '-';
                     }
-                case "analysis":
+                case 'analysis':
                     if (this.data[cmp].valid) {
                         return (
                             formatCurrency(this.data[cmp].analysisPrice) +
-                            " AS$ (" +
+                            ' AS$ (' +
                             displayPerc(
                                 this.data[cmp].analysisPricePoint,
-                                "price"
+                                'price'
                             ) +
-                            ")"
+                            ')'
                         );
                     } else {
-                        return "-";
+                        return '-';
                     }
                 default:
                     return (
                         '<span class="warning">ERROR:2502 Wrong type set:' +
                         type +
-                        "</span>"
+                        '</span>'
                     );
             }
         },
         displayIndex: function (cmp) {
             if (this.data[cmp].valid) {
-                let span = $("<span></span>");
+                let span = $('<span></span>');
                 if (this.data[cmp].index >= 90) {
-                    return span.addClass("good").text(this.data[cmp].index);
+                    return span.addClass('good').text(this.data[cmp].index);
                 }
                 if (this.data[cmp].index <= 50) {
-                    return span.addClass("bad").text(this.data[cmp].index);
+                    return span.addClass('bad').text(this.data[cmp].index);
                 }
-                return span.addClass("warning").text(this.data[cmp].index);
+                return span.addClass('warning').text(this.data[cmp].index);
             } else {
-                return "-";
+                return '-';
             }
         },
         displayTotalLoad: function (type) {
             let cmp = [];
             switch (type) {
-                case "all":
-                    cmp = ["Y", "C", "F", "Cargo"];
+                case 'all':
+                    cmp = ['Y', 'C', 'F', 'Cargo'];
                     break;
-                case "pax":
-                    cmp = ["Y", "C", "F"];
+                case 'pax':
+                    cmp = ['Y', 'C', 'F'];
                     break;
                 default:
                 // code block
@@ -371,20 +371,20 @@ function getAnalysis(flights, prices, storedData) {
             if (cap) {
                 load = Math.round((bkd / cap) * 100);
                 return (
-                    bkd + " / " + cap + " (" + displayPerc(load, "load") + ")"
+                    bkd + ' / ' + cap + ' (' + displayPerc(load, 'load') + ')'
                 );
             } else {
-                return "-";
+                return '-';
             }
         },
         displayTotalIndex: function (type) {
             let cmp = [];
             switch (type) {
-                case "all":
-                    cmp = ["Y", "C", "F", "Cargo"];
+                case 'all':
+                    cmp = ['Y', 'C', 'F', 'Cargo'];
                     break;
-                case "pax":
-                    cmp = ["Y", "C", "F"];
+                case 'pax':
+                    cmp = ['Y', 'C', 'F'];
                     break;
                 default:
                 // code block
@@ -399,16 +399,16 @@ function getAnalysis(flights, prices, storedData) {
             }
             if (count) {
                 totalIndex = Math.round(totalIndex / count);
-                let span = $("<span></span>");
+                let span = $('<span></span>');
                 if (totalIndex >= 90) {
-                    return span.addClass("good").text(totalIndex);
+                    return span.addClass('good').text(totalIndex);
                 }
                 if (totalIndex <= 50) {
-                    return span.addClass("bad").text(totalIndex);
+                    return span.addClass('bad').text(totalIndex);
                 }
-                return span.addClass("warning").text(totalIndex);
+                return span.addClass('warning').text(totalIndex);
             } else {
-                return "-";
+                return '-';
             }
         },
         hasValue: function (value) {
@@ -423,7 +423,7 @@ function getAnalysis(flights, prices, storedData) {
 
     //Filter flights
     flights = flights.filter(function (flight) {
-        return flight.status == "finished" || flight.status == "inflight";
+        return flight.status == 'finished' || flight.status == 'inflight';
     });
 
     //Check historical data
@@ -523,7 +523,7 @@ function generateRecommendation(analysis, prices) {
                 let newPricePoint = prices[cmp].currentPricePoint + step.step;
                 //See if new price in bounds for Drop
                 if (step.step < 0) {
-                    analysis.data[cmp].recType = "bad";
+                    analysis.data[cmp].recType = 'bad';
                     if (
                         newPricePoint <
                         settings.invPricing.recommendation[cmp].minPrice
@@ -534,7 +534,7 @@ function generateRecommendation(analysis, prices) {
                 }
                 //See if new price in bounds for Raise
                 if (step.step > 0) {
-                    analysis.data[cmp].recType = "good";
+                    analysis.data[cmp].recType = 'good';
                     if (
                         newPricePoint >
                         settings.invPricing.recommendation[cmp].maxPrice
@@ -552,7 +552,7 @@ function generateRecommendation(analysis, prices) {
                         ) {
                             //Already at lowest point
                             analysis.data[cmp].recommendation =
-                                "Already at lowest price!";
+                                'Already at lowest price!';
                         }
                         if (
                             newPricePoint ==
@@ -560,11 +560,11 @@ function generateRecommendation(analysis, prices) {
                         ) {
                             //Already at highest point
                             analysis.data[cmp].recommendation =
-                                "Already at highest price!";
+                                'Already at highest price!';
                         }
                     }
                 } else {
-                    analysis.data[cmp].recType = "neutral";
+                    analysis.data[cmp].recType = 'neutral';
                 }
                 //check if not set by exceptions
                 if (!analysis.data[cmp].recommendation) {
@@ -600,7 +600,7 @@ function generateRouteIndex(analysis) {
 //Display analysis
 function displayAnalysis(analysis, prices) {
     //Build table
-    let mainDiv = $(".container-fluid .row .col-md-10 div .as-panel:eq(0)");
+    let mainDiv = $('.container-fluid .row .col-md-10 div .as-panel:eq(0)');
     mainDiv.after(
         `
     <h3>Analysis (today's snapshot)</h3>
@@ -617,29 +617,29 @@ function displayAnalysis(analysis, prices) {
 
     //Table head
     let th = [];
-    th.push("<th>SC</th>");
-    th.push("<th>Note</th>");
+    th.push('<th>SC</th>');
+    th.push('<th>Note</th>');
     th.push('<th class="aes-text-right">Analysis Price</th>');
-    th.push("<th>Load</th>");
+    th.push('<th>Load</th>');
     th.push('<th class="aes-text-right">Index</th>');
     th.push('<th class="aes-text-right">Current Price</th>');
-    th.push("<th>Recommendation</th>");
+    th.push('<th>Recommendation</th>');
     th.push('<th class="aes-text-right">New Price</th>');
-    let headRow = $("<tr></tr>").append(th);
-    let thead = $("<thead></thead>").append(headRow);
+    let headRow = $('<tr></tr>').append(th);
+    let thead = $('<thead></thead>').append(headRow);
 
     //Table body
-    let tbody = $("<tbody></tbody>");
+    let tbody = $('<tbody></tbody>');
     for (let cmp in analysis.data) {
         let td = [];
-        td.push("<td>" + cmp + "</td>");
-        td.push("<td>" + analysis.note(cmp) + "</td>");
+        td.push('<td>' + cmp + '</td>');
+        td.push('<td>' + analysis.note(cmp) + '</td>');
         td.push(
             '<td class="aes-text-right">' +
-                analysis.displayPrice(cmp, "analysis") +
-                "</td>"
+                analysis.displayPrice(cmp, 'analysis') +
+                '</td>'
         );
-        td.push("<td>" + analysis.displayLoad(cmp) + "</td>");
+        td.push('<td>' + analysis.displayLoad(cmp) + '</td>');
         td.push(
             $('<td class="aes-text-right"></td>').html(
                 analysis.displayIndex(cmp)
@@ -647,16 +647,16 @@ function displayAnalysis(analysis, prices) {
         );
         td.push(
             '<td class="aes-text-right">' +
-                analysis.displayPrice(cmp, "current") +
-                "</td>"
+                analysis.displayPrice(cmp, 'current') +
+                '</td>'
         );
-        td.push("<td>" + analysis.displayRec(cmp) + "</td>");
+        td.push('<td>' + analysis.displayRec(cmp) + '</td>');
         td.push(
             '<td class="aes-text-right">' +
-                analysis.displayPrice(cmp, "new") +
-                "</td>"
+                analysis.displayPrice(cmp, 'new') +
+                '</td>'
         );
-        let row = $("<tr></tr>").append(td);
+        let row = $('<tr></tr>').append(td);
         tbody.append(row);
     }
 
@@ -665,50 +665,50 @@ function displayAnalysis(analysis, prices) {
     footRow.push('<tr><td colspan="9"></td></tr>');
     //Total PAX
     let tf = [];
-    tf.push("<th>Total PAX</th>");
+    tf.push('<th>Total PAX</th>');
     tf.push('<td colspan="2"></td>');
-    tf.push($("<td></td>").html(analysis.displayTotalLoad("pax")));
+    tf.push($('<td></td>').html(analysis.displayTotalLoad('pax')));
     tf.push(
         $('<td class="aes-text-right"></td>').html(
-            analysis.displayTotalIndex("pax")
+            analysis.displayTotalIndex('pax')
         )
     );
     tf.push('<td colspan="3"></td>');
-    footRow.push($("<tr></tr>").append(tf));
+    footRow.push($('<tr></tr>').append(tf));
     //Total
     tf = [];
-    tf.push("<th>Total PAX+Cargo</th>");
+    tf.push('<th>Total PAX+Cargo</th>');
     tf.push('<td colspan="2"></td>');
-    tf.push($("<td></td>").html(analysis.displayTotalLoad("all")));
+    tf.push($('<td></td>').html(analysis.displayTotalLoad('all')));
     tf.push(
         $('<td class="aes-text-right"></td>').html(
-            analysis.displayTotalIndex("all")
+            analysis.displayTotalIndex('all')
         )
     );
     tf.push('<td colspan="3"></td>');
-    footRow.push($("<tr></tr>").append(tf));
-    let tfoot = $("<tfoot></tfoot>").append(footRow);
+    footRow.push($('<tr></tr>').append(tf));
+    let tfoot = $('<tfoot></tfoot>').append(footRow);
 
-    $("#aes-table-analysis").append(thead, tbody, tfoot);
+    $('#aes-table-analysis').append(thead, tbody, tfoot);
 
     //Display pricing and data save buttons
-    if (analysis.hasValue("valid")) {
+    if (analysis.hasValue('valid')) {
         let invPricingAnalysisBar = $(
             '<ul class="as-action-bar as-panel"></ul>'
         );
         let invPricingAnalysisBarSpan = $('<span class="warning"></span>');
         invPricingAnalysisBar.append(
-            $("<li></li>").html(invPricingAnalysisBarSpan)
+            $('<li></li>').html(invPricingAnalysisBarSpan)
         );
-        $("#aes-div-analysis").prepend(invPricingAnalysisBar);
+        $('#aes-div-analysis').prepend(invPricingAnalysisBar);
         //create buttons
         //Save Data
         let saveInvPricingBtn = $(
             '<button class="btn btn-default" id="aes-btn-invPricing-save-snapshot"></button>'
         );
         $(saveInvPricingBtn).click(function () {
-            $(this).closest("li").remove();
-            invPricingAnalysisBarSpan.text("Saving analysis data...");
+            $(this).closest('li').remove();
+            invPricingAnalysisBarSpan.text('Saving analysis data...');
             //Get updated time
             let updateTime = AES.getServerDate().time;
             pricingData.date[todayDate] = analysis;
@@ -722,18 +722,18 @@ function displayAnalysis(analysis, prices) {
                 function () {
                     invPricingAnalysisBarSpan
                         .removeClass()
-                        .addClass("good")
-                        .text("Data Saved!");
+                        .addClass('good')
+                        .text('Data Saved!');
                     //Automation
                     if (settings.invPricing.autoClose) {
                         // Use message passing to close tab via background script
                         chrome.runtime.sendMessage(
-                            { action: "closeTab" },
+                            { action: 'closeTab' },
                             function (response) {
                                 if (!response || !response.success) {
                                     console.log(
-                                        "AES: Could not auto-close tab:",
-                                        response?.error || "Unknown error"
+                                        'AES: Could not auto-close tab:',
+                                        response?.error || 'Unknown error'
                                     );
                                 }
                             }
@@ -748,8 +748,8 @@ function displayAnalysis(analysis, prices) {
             '<button class="btn btn-default" id="aes-btn-invPricing-apply-new-prices">apply new prices (and save data)</button>'
         );
         $(applyNewPriceInvPricingBtn).click(function () {
-            $(this).closest("ul").find("li button").closest("li").remove();
-            invPricingAnalysisBarSpan.text("Updating prices...");
+            $(this).closest('ul').find('li button').closest('li').remove();
+            invPricingAnalysisBarSpan.text('Updating prices...');
             //Get updated time
             let updateTime = AES.getServerDate().time;
             pricingData.date[todayDate] = analysis;
@@ -766,7 +766,7 @@ function displayAnalysis(analysis, prices) {
             );
         });
         //Update new pricing input
-        if (analysis.hasValue("newPrice")) {
+        if (analysis.hasValue('newPrice')) {
             //Modify new price input
             for (let cmp in analysis.data) {
                 if (analysis.data[cmp].newPrice) {
@@ -781,7 +781,7 @@ function displayAnalysis(analysis, prices) {
             if (pricingData.date[todayDate].pricingUpdated) {
                 //Today pricing updated
                 invPricingAnalysisBarSpan.text(
-                    "Today prices have been updated at: " +
+                    'Today prices have been updated at: ' +
                         pricingData.date[todayDate].updateTime
                 );
 
@@ -789,12 +789,12 @@ function displayAnalysis(analysis, prices) {
                 if (settings.invPricing.autoClose) {
                     // Use message passing to close tab via background script
                     chrome.runtime.sendMessage(
-                        { action: "closeTab" },
+                        { action: 'closeTab' },
                         function (response) {
                             if (!response || !response.success) {
                                 console.log(
-                                    "AES: Could not auto-close tab:",
-                                    response?.error || "Unknown error"
+                                    'AES: Could not auto-close tab:',
+                                    response?.error || 'Unknown error'
                                 );
                             }
                         }
@@ -807,26 +807,26 @@ function displayAnalysis(analysis, prices) {
                         pricingData.date[todayDate].updateTime
                 );
                 $(invPricingAnalysisBar).append(
-                    $("<li></li>").html(
-                        saveInvPricingBtn.text("save snapshot data again")
+                    $('<li></li>').html(
+                        saveInvPricingBtn.text('save snapshot data again')
                     )
                 );
-                if (analysis.hasValue("newPrice")) {
+                if (analysis.hasValue('newPrice')) {
                     $(invPricingAnalysisBar).append(
-                        $("<li></li>").html(applyNewPriceInvPricingBtn)
+                        $('<li></li>').html(applyNewPriceInvPricingBtn)
                     );
                 }
             }
         } else {
             //Today data does not exist
             $(invPricingAnalysisBar).append(
-                $("<li></li>").html(
-                    saveInvPricingBtn.text("save snapshot data")
+                $('<li></li>').html(
+                    saveInvPricingBtn.text('save snapshot data')
                 )
             );
-            if (analysis.hasValue("newPrice")) {
+            if (analysis.hasValue('newPrice')) {
                 $(invPricingAnalysisBar).append(
-                    $("<li></li>").html(applyNewPriceInvPricingBtn)
+                    $('<li></li>').html(applyNewPriceInvPricingBtn)
                 );
             }
         }
@@ -847,14 +847,14 @@ function displayHistory(analysis) {
     //If historical data exist then build
     if (dates.length) {
         //Build Div
-        let mainDiv = $("#aes-div-analysis");
+        let mainDiv = $('#aes-div-analysis');
         mainDiv.after(
             '<h3>Historical Data</h3><div id="aes-div-invPricing-historicalData" class="as-panel"></div>'
         );
 
         //History Options
-        let fieldset = $("<fieldset></fieldset>").html(
-            "<legend>History Options</legend>"
+        let fieldset = $('<fieldset></fieldset>').html(
+            '<legend>History Options</legend>'
         );
         //Hide Now
         let option1 = $('<div class="checkbox"></div>').html(
@@ -877,23 +877,23 @@ function displayHistory(analysis) {
         );
 
         fieldset.append(option1, option2, wrapper);
-        $("#aes-div-invPricing-historicalData").append(fieldset);
+        $('#aes-div-invPricing-historicalData').append(fieldset);
         //Default values
         if (settings.invPricing.historyTable.showNow) {
-            $("#aes-check-inventory-history-showNow").prop("checked", true);
+            $('#aes-check-inventory-history-showNow').prop('checked', true);
         }
         if (settings.invPricing.historyTable.showOnlyPricing) {
-            $("#aes-check-inventory-history-showOnlyPricing").prop(
-                "checked",
+            $('#aes-check-inventory-history-showOnlyPricing').prop(
+                'checked',
                 true
             );
         }
-        $("#aes-select-inventory-history-numberPastDates").val(
+        $('#aes-select-inventory-history-numberPastDates').val(
             settings.invPricing.historyTable.numberOfDates
         );
 
         //Change events
-        $("#aes-check-inventory-history-showNow").change(function () {
+        $('#aes-check-inventory-history-showNow').change(function () {
             if (this.checked) {
                 settings.invPricing.historyTable.showNow = 1;
             } else {
@@ -902,7 +902,7 @@ function displayHistory(analysis) {
             chrome.storage.local.set({ settings: settings }, function () {});
             buildHistoryTable();
         });
-        $("#aes-check-inventory-history-showOnlyPricing").change(function () {
+        $('#aes-check-inventory-history-showOnlyPricing').change(function () {
             buildHistoryTable();
             if (this.checked) {
                 settings.invPricing.historyTable.showOnlyPricing = 1;
@@ -911,9 +911,9 @@ function displayHistory(analysis) {
             }
             chrome.storage.local.set({ settings: settings }, function () {});
         });
-        $("#aes-select-inventory-history-numberPastDates").change(function () {
+        $('#aes-select-inventory-history-numberPastDates').change(function () {
             settings.invPricing.historyTable.numberOfDates = $(
-                "#aes-select-inventory-history-numberPastDates"
+                '#aes-select-inventory-history-numberPastDates'
             ).val();
             chrome.storage.local.set({ settings: settings }, function () {});
             buildHistoryTable();
@@ -925,28 +925,28 @@ function displayHistory(analysis) {
 
 function buildHistoryTable() {
     //Clean previous table
-    $("#aes-table-inventory-history").remove();
+    $('#aes-table-inventory-history').remove();
 
     let showNow = 0;
     let showOnlyPricing = 0;
-    if ($("#aes-check-inventory-history-showNow:checked").length > 0) {
+    if ($('#aes-check-inventory-history-showNow:checked').length > 0) {
         showNow = 1;
     }
-    if ($("#aes-check-inventory-history-showOnlyPricing:checked").length > 0) {
+    if ($('#aes-check-inventory-history-showOnlyPricing:checked').length > 0) {
         showOnlyPricing = 1;
     }
 
     let numberOfDates = $(
-        "#aes-select-inventory-history-numberPastDates"
+        '#aes-select-inventory-history-numberPastDates'
     ).val();
     switch (numberOfDates) {
-        case "5":
+        case '5':
             numberOfDates = 5;
             break;
-        case "10":
+        case '10':
             numberOfDates = 10;
             break;
-        case "all":
+        case 'all':
             numberOfDates = 0;
             break;
         default:
@@ -977,11 +977,11 @@ function buildHistoryTable() {
 
     if (dates.length) {
         //Headrows
-        let th = ["<th></th>"];
-        let th1 = ["<th>SC</th>"];
+        let th = ['<th></th>'];
+        let th1 = ['<th>SC</th>'];
         if (showNow) {
             //Now
-            th.push($('<th colspan="4"></th>').text("Now"));
+            th.push($('<th colspan="4"></th>').text('Now'));
             th1.push('<th class="text-nowrap aes-text-right">Price</th>');
             th1.push('<th class="text-nowrap">&Delta; %</th>');
             th1.push('<th class="text-nowrap">Load</th>');
@@ -1012,18 +1012,18 @@ function buildHistoryTable() {
             }
         }
 
-        let headRow = $("<tr></tr>").append(th);
-        let headRow2 = $("<tr></tr>").append(th1);
-        let thead = $("<thead></thead>").append(headRow, headRow2);
+        let headRow = $('<tr></tr>').append(th);
+        let headRow2 = $('<tr></tr>').append(th1);
+        let thead = $('<thead></thead>').append(headRow, headRow2);
 
         //Build table
-        let compartments = ["Y", "C", "F", "Cargo"];
+        let compartments = ['Y', 'C', 'F', 'Cargo'];
 
         //Tbody rows
-        let tbody = $("<tbody></tbody>");
+        let tbody = $('<tbody></tbody>');
         compartments.forEach(function (cmp) {
             let td = [];
-            td.push($("<td></td>").text(cmp));
+            td.push($('<td></td>').text(cmp));
             if (showNow) {
                 //Now TDs
                 let data = analysis.data[cmp];
@@ -1111,25 +1111,25 @@ function buildHistoryTable() {
             }
 
             //Finish row
-            let row = $("<tr></tr>").append(td);
+            let row = $('<tr></tr>').append(td);
             tbody.append(row);
         });
 
         //Table footer Total Rows
         let totalColumns = th1.length;
         let footRow = [];
-        let footerRows = ["pax", "all"];
+        let footerRows = ['pax', 'all'];
         footRow.push('<tr><td colspan="' + totalColumns + '"></td></tr>');
         //Total PAX
         footerRows.forEach(function (type) {
             let tf = [];
-            tf.push($("<th></th>").text(historyDisplayTotalText(type)));
+            tf.push($('<th></th>').text(historyDisplayTotalText(type)));
             if (showNow) {
                 //Now
                 let data = analysis.data;
                 tf.push('<td colspan="2"></td>');
-                tf.push($("<td></td>").html(historyDisplayTotal(data, type)));
-                tf.push("<td></td>");
+                tf.push($('<td></td>').html(historyDisplayTotal(data, type)));
+                tf.push('<td></td>');
                 //index
                 tf.push(
                     $('<td class="aes-text-right"></td>').html(
@@ -1143,9 +1143,9 @@ function buildHistoryTable() {
                 if (i) {
                     tf.push('<td colspan="2"></td>');
                     tf.push(
-                        $("<td></td>").html(historyDisplayTotal(data, type))
+                        $('<td></td>').html(historyDisplayTotal(data, type))
                     );
-                    tf.push("<td></td>");
+                    tf.push('<td></td>');
                     //index
                     tf.push(
                         $('<td class="aes-text-right"></td>').html(
@@ -1153,9 +1153,9 @@ function buildHistoryTable() {
                         )
                     );
                 } else {
-                    tf.push("<td></td>");
+                    tf.push('<td></td>');
                     tf.push(
-                        $("<td></td>").html(historyDisplayTotal(data, type))
+                        $('<td></td>').html(historyDisplayTotal(data, type))
                     );
                     //index
                     tf.push(
@@ -1166,10 +1166,10 @@ function buildHistoryTable() {
                 }
             }
 
-            footRow.push($("<tr></tr>").append(tf));
+            footRow.push($('<tr></tr>').append(tf));
         });
 
-        let tfoot = $("<tfoot></tfoot>").append(footRow);
+        let tfoot = $('<tfoot></tfoot>').append(footRow);
         let table = $(
             '<table class="table table-bordered table-striped table-hover"></table>'
         ).append(thead, tbody, tfoot);
@@ -1177,29 +1177,29 @@ function buildHistoryTable() {
             '<div style="overflow-x:auto;" id="aes-table-inventory-history" class="as-table-well"></div>'
         ).append(table);
 
-        $("#aes-div-invPricing-historicalData").append(tableDiv);
+        $('#aes-div-invPricing-historicalData').append(tableDiv);
     }
 }
 
 function displayValidationError() {
     let p = [];
     p.push(
-        $("<p></p>").text(
-            "AES Inventory Pricing Module could not be loaded because of errors:"
+        $('<p></p>').text(
+            'AES Inventory Pricing Module could not be loaded because of errors:'
         )
     );
     aesmodule.errors.forEach(function (error) {
-        p.push($('<p class="bad"></p>').html("<b>" + error + "</b>"));
+        p.push($('<p class="bad"></p>').html('<b>' + error + '</b>'));
     });
     p.push(
         $('<p class="warning"></p>').html(
-            "Refresh the page after making adjustments."
+            'Refresh the page after making adjustments.'
         )
     );
     let panel = $('<div class="as-panel"></div>').append(p);
-    let h2 = $("<h3></h3>").text("AES Inventory Pricing Module");
-    let div = $("<div></div>").append(h2, panel);
-    $("h1:eq(0)").after(h2, panel);
+    let h2 = $('<h3></h3>').text('AES Inventory Pricing Module');
+    let div = $('<div></div>').append(h2, panel);
+    $('h1:eq(0)').after(h2, panel);
 }
 
 //History Table functions
@@ -1207,11 +1207,11 @@ function historyDisplayIndex(data, type) {
     let cmp = [];
     let index = 0;
     switch (type) {
-        case "all":
-            cmp = ["Y", "C", "F", "Cargo"];
+        case 'all':
+            cmp = ['Y', 'C', 'F', 'Cargo'];
             break;
-        case "pax":
-            cmp = ["Y", "C", "F"];
+        case 'pax':
+            cmp = ['Y', 'C', 'F'];
             break;
         case 0:
             cmp = 0;
@@ -1234,36 +1234,36 @@ function historyDisplayIndex(data, type) {
         }
     }
     if (index) {
-        let span = $("<span></span>");
+        let span = $('<span></span>');
         if (index >= 90) {
-            return span.addClass("good").text(index);
+            return span.addClass('good').text(index);
         }
         if (index <= 50) {
-            return span.addClass("bad").text(index);
+            return span.addClass('bad').text(index);
         }
-        return span.addClass("warning").text(index);
+        return span.addClass('warning').text(index);
     } else {
-        return "-";
+        return '-';
     }
 }
 
 function historyDisplayTotalText(type) {
     switch (type) {
-        case "all":
-            return "Total PAX+Cargo";
-        case "pax":
-            return "Total PAX";
+        case 'all':
+            return 'Total PAX+Cargo';
+        case 'pax':
+            return 'Total PAX';
     }
 }
 
 function historyDisplayTotal(data, type) {
     let cmp = [];
     switch (type) {
-        case "all":
-            cmp = ["Y", "C", "F", "Cargo"];
+        case 'all':
+            cmp = ['Y', 'C', 'F', 'Cargo'];
             break;
-        case "pax":
-            cmp = ["Y", "C", "F"];
+        case 'pax':
+            cmp = ['Y', 'C', 'F'];
             break;
         default:
         // code block
@@ -1278,9 +1278,9 @@ function historyDisplayTotal(data, type) {
     });
     if (cap) {
         load = Math.round((bkd / cap) * 100);
-        return bkd + " / " + cap + " (" + displayPerc(load, "load") + ")";
+        return bkd + ' / ' + cap + ' (' + displayPerc(load, 'load') + ')';
     } else {
-        return "-";
+        return '-';
     }
 }
 
@@ -1290,10 +1290,10 @@ function displayHistoryLoad(data) {
         let capacity = data.totalCap;
         let load = Math.round((booked / capacity) * 100);
         return (
-            booked + " / " + capacity + " (" + displayPerc(load, "load") + ")"
+            booked + ' / ' + capacity + ' (' + displayPerc(load, 'load') + ')'
         );
     } else {
-        return "-";
+        return '-';
     }
 }
 
@@ -1303,12 +1303,12 @@ function displayHistoryPrice(data) {
         let pricePoint = data.analysisPricePoint;
         return (
             formatCurrency(price) +
-            " AS$ (" +
-            displayPerc(pricePoint, "price") +
-            ")"
+            ' AS$ (' +
+            displayPerc(pricePoint, 'price') +
+            ')'
         );
     } else {
-        return "-";
+        return '-';
     }
 }
 
@@ -1322,40 +1322,40 @@ function displayDifference(current, old) {
         let price = current.analysisPricePoint - old.analysisPricePoint;
         return { load: load, price: price };
     } else {
-        return { load: "-", price: "-" };
+        return { load: '-', price: '-' };
     }
 }
 
 function displayPerc(perc, type) {
-    let span = $("<span></span>");
+    let span = $('<span></span>');
     switch (type) {
-        case "price":
+        case 'price':
             if (perc >= 100) {
-                span.addClass("good").text(perc + "%");
-                return span.prop("outerHTML");
+                span.addClass('good').text(perc + '%');
+                return span.prop('outerHTML');
             }
             if (perc < 75) {
-                span.addClass("bad").text(perc + "%");
-                return span.prop("outerHTML");
+                span.addClass('bad').text(perc + '%');
+                return span.prop('outerHTML');
             }
-            span.addClass("warning").text(perc + "%");
-            return span.prop("outerHTML");
-        case "load":
+            span.addClass('warning').text(perc + '%');
+            return span.prop('outerHTML');
+        case 'load':
             if (perc >= 70) {
-                span.addClass("good").text(perc + "%");
-                return span.prop("outerHTML");
+                span.addClass('good').text(perc + '%');
+                return span.prop('outerHTML');
             }
             if (perc < 40) {
-                span.addClass("bad").text(perc + "%");
-                return span.prop("outerHTML");
+                span.addClass('bad').text(perc + '%');
+                return span.prop('outerHTML');
             }
-            span.addClass("warning").text(perc + "%");
-            return span.prop("outerHTML");
+            span.addClass('warning').text(perc + '%');
+            return span.prop('outerHTML');
         default:
             return (
                 '<span class="warning">ERROR:2502 Wrong type set:' +
                 type +
-                "</span>"
+                '</span>'
             );
     }
 }
@@ -1366,16 +1366,16 @@ function formatCurrency(value) {
 
 function getPricingInventoryKey() {
     // Get Origin and Destination
-    let x = $("h2:first a");
+    let x = $('h2:first a');
     let org = $(x[0]).text();
     let dest = $(x[1]).text();
     // Create key
-    let key = server + airline.id + org + dest + "routeAnalysis";
+    let key = server + airline.id + org + dest + 'routeAnalysis';
     return {
         key: key,
         server: server,
         airline: airline,
-        type: "routeAnalysis",
+        type: 'routeAnalysis',
         origin: org,
         destination: dest,
     };
