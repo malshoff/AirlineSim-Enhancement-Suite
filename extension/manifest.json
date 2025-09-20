@@ -68,9 +68,7 @@
             "matches": ["https://*.airlinesim.aero/app/info/enterprises/*"]
         },
         {
-            "js": [
-                "modules/flightInfo/flightInfo.js"
-            ],
+            "js": ["modules/flightInfo/flightInfo.js"],
             "matches": ["https://*.airlinesim.aero/action/info/flight*"]
         },
         {
@@ -92,7 +90,8 @@
         "activeTab",
         "declarativeContent",
         "storage",
-        "unlimitedStorage"
+        "unlimitedStorage",
+        "tabs"
     ],
     "host_permissions": ["https://*.airlinesim.aero/"],
     "options_page": "options.html",

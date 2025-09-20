@@ -726,7 +726,18 @@ function displayAnalysis(analysis, prices) {
                         .text("Data Saved!");
                     //Automation
                     if (settings.invPricing.autoClose) {
-                        window.close();
+                        // Use message passing to close tab via background script
+                        chrome.runtime.sendMessage(
+                            { action: "closeTab" },
+                            function (response) {
+                                if (!response || !response.success) {
+                                    console.log(
+                                        "AES: Could not auto-close tab:",
+                                        response?.error || "Unknown error"
+                                    );
+                                }
+                            }
+                        );
                     }
                 }
             );
@@ -776,7 +787,18 @@ function displayAnalysis(analysis, prices) {
 
                 //Automation
                 if (settings.invPricing.autoClose) {
-                    window.close();
+                    // Use message passing to close tab via background script
+                    chrome.runtime.sendMessage(
+                        { action: "closeTab" },
+                        function (response) {
+                            if (!response || !response.success) {
+                                console.log(
+                                    "AES: Could not auto-close tab:",
+                                    response?.error || "Unknown error"
+                                );
+                            }
+                        }
+                    );
                 }
             } else {
                 //Today pricing not updated

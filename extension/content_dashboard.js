@@ -103,10 +103,7 @@ function displayRouteManagement() {
                     label: "Hide checked",
                 },
                 openInventory: {
-                    label: "Open inventory (max 6)",
-                },
-                openAllInventory: {
-                    label: "Open ALL inventory (2/sec)",
+                    label: "Open next 6 inventory",
                 },
                 exportCSV: {
                     label: "Export to CSV",
@@ -176,97 +173,50 @@ function displayRouteManagement() {
                 }
             );
 
-            // Open Inventory
+            // Open Next 6 Inventory
             buttonElements["openInventory"].element.addEventListener(
                 "click",
                 function () {
-                    //Get checked columns
-                    let pages = $("#aes-table-routeManagement tbody tr")
-                        .has("input:checked")
-                        .map(function () {
+                    // Find the next 6 unchecked routes and collect their URLs
+                    let pages = [];
+                    let count = 0;
+
+                    $("#aes-table-routeManagement tbody tr").each(function () {
+                        if (count >= 6) return false; // Stop after 6
+
+                        let checkbox = $(this).find("input[type='checkbox']");
+                        if (!checkbox.is(":checked")) {
+                            // Check this route
+                            checkbox.prop("checked", true);
+
+                            // Get the URL for this route
                             let orgdest = $(this).attr("id");
                             orgdest = orgdest.split("-");
                             orgdest = orgdest[2];
-                            //let orgdest = $(this).find("td:eq(1)").text() + $(this).find("td:eq(2)").text();
                             let url =
                                 "https://" +
                                 server +
                                 ".airlinesim.aero/app/com/inventory/" +
                                 orgdest;
-                            return url;
-                        })
-                        .toArray();
+                            pages.push(url);
+                            count++;
+                        }
+                    });
 
-                    //Open new tabs
+                    // Open only the newly selected 6 tabs
                     for (let i = 0; i < pages.length; i++) {
-                        if (i >= 6) break;
-                        window.open(pages[i], "_blank");
-                    }
-                }
-            );
-
-            // Open ALL Inventory with rate limiting
-            buttonElements["openAllInventory"].element.addEventListener(
-                "click",
-                function () {
-                    // Disable the button to prevent multiple clicks
-                    this.disabled = true;
-                    this.innerText = "Opening...";
-
-                    //Get ALL rows (not just checked ones)
-                    let pages = $("#aes-table-routeManagement tbody tr")
-                        .map(function () {
-                            let orgdest = $(this).attr("id");
-                            orgdest = orgdest.split("-");
-                            orgdest = orgdest[2];
-                            let url =
-                                "https://" +
-                                server +
-                                ".airlinesim.aero/app/com/inventory/" +
-                                orgdest;
-                            return url;
-                        })
-                        .toArray();
-
-                    // Open tabs with rate limiting (2 per second)
-                    let currentIndex = 0;
-                    const openNextBatch = () => {
-                        // Open 2 tabs at once
-                        for (
-                            let i = 0;
-                            i < 2 && currentIndex < pages.length;
-                            i++, currentIndex++
-                        ) {
-                            // Open tab in background without focusing it
-                            // Use Chrome extension API if available, otherwise fallback
-                            if (typeof chrome !== "undefined" && chrome.tabs) {
-                                chrome.tabs.create({
-                                    url: pages[currentIndex],
-                                    active: false,
-                                });
-                            } else {
-                                // Fallback: open with window.open and immediately refocus current window
-                                const currentWindow = window;
-                                window.open(pages[currentIndex], "_blank");
-                                setTimeout(() => currentWindow.focus(), 10);
-                            }
-                        }
-
-                        // Update button text with progress
-                        this.innerText = `Opening... (${currentIndex}/${pages.length})`;
-
-                        // Continue if there are more pages to open
-                        if (currentIndex < pages.length) {
-                            setTimeout(openNextBatch, 1000); // Wait 1 second before opening next batch
+                        if (typeof chrome !== "undefined" && chrome.tabs) {
+                            chrome.tabs.create({
+                                url: pages[i],
+                                active: false,
+                            });
                         } else {
-                            // Re-enable button when done
-                            this.disabled = false;
-                            this.innerText = "Open ALL inventory (2/sec)";
+                            // Fallback: open with window.open and immediately refocus current window
+                            const currentWindow = window;
+                            window.open(pages[i], "_blank");
+                            setTimeout(() => currentWindow.focus(), 10);
                         }
-                    };
-
-                    // Start opening tabs
-                    openNextBatch();
+                    }
                 }
             );
 
@@ -279,7 +229,7 @@ function displayRouteManagement() {
                     $("#aes-table-routeManagement thead tr:last th").each(
                         function (index) {
                             if (index === 0) {
-                                headers.push("Selected"); // For checkbox column
+                                headers.push("Selected");
                             } else {
                                 let headerText = $(this).text().trim();
                                 if (headerText && headerText !== "Action") {
@@ -291,7 +241,7 @@ function displayRouteManagement() {
 
                     // Get table data
                     let csvData = [];
-                    csvData.push(headers); // Add headers as first row
+                    csvData.push(headers);
 
                     $("#aes-table-routeManagement tbody tr").each(function () {
                         let row = [];
@@ -299,7 +249,6 @@ function displayRouteManagement() {
                             .find("td")
                             .each(function (index) {
                                 if (index === 0) {
-                                    // Checkbox column - check if selected
                                     let isChecked = $(this)
                                         .find("input[type='checkbox']")
                                         .is(":checked");
@@ -308,10 +257,8 @@ function displayRouteManagement() {
                                     index ===
                                     $(this).parent().find("td").length - 1
                                 ) {
-                                    // Skip the Action column (last column)
                                     return;
                                 } else {
-                                    // Regular data column
                                     let cellText = $(this).text().trim();
                                     // Handle cells that might contain commas or quotes
                                     if (
@@ -3099,7 +3046,7 @@ function generateTable(tableOptionsRule) {
 
             function masterTableOptionsOpenAircraft() {
                 let btn = $(
-                    '<button type="button" class="btn btn-default">Open aircraft (max 6)</button>'
+                    '<button type="button" class="btn btn-default">Open aircraft (GO CRAZY)</button>'
                 );
                 btn.click(function () {
                     let urls = $("tbody tr", table)
@@ -3118,9 +3065,9 @@ function generateTable(tableOptionsRule) {
                     //Open new tabs
                     for (let i = 0; i < urls.length; i++) {
                         window.open(urls[i], "_blank");
-                        if (i == 5) {
-                            break;
-                        }
+                        // if (i == 5) {
+                        //     break;
+                        // }
                     }
                 });
                 return btn;
